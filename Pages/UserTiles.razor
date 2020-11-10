@@ -1,4 +1,7 @@
-﻿<div class="row">
+﻿@using sportal.Data
+@inject UserService UserServiceInstance
+
+<div class="row">
     <div class="card qlik-tanzanite z-depth-4 col s2 offset-s2">
         <div class="card-content white-text">
             <span class="card-title">AD Groups</span>
@@ -73,6 +76,7 @@
 </div>
 <br>
 <div class="row">
+
     <div class="card  qlik-green z-depth-4 col s2 offset-s2">
         <div class="card-content white-text">
             <span class="card-title">Sales Director</span>
@@ -262,6 +266,13 @@
     </div>
 
 
+    @foreach (User u in users)
+    {
+<tr>
+    <td>@u.Subject</td>
+    <td>@u.DisplayName</td>
+</tr>       }
+
 
 
 
@@ -269,6 +280,12 @@
 
 </div>
 
+@code { private User[] users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = await UserServiceInstance.GetUserListAsync();
+    } }
 
 
 <footer class="page-footer qlik-tanzanite">
@@ -294,6 +311,3 @@
         </div>
     </div>
 </footer>
-
-
-
