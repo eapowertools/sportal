@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace sportal.Data
@@ -11,10 +12,14 @@ namespace sportal.Data
 		public UserService()
 		{
 			_users = new List<User>();
-			_users.Add(new User("someSubject", "Jesse Paris", "jparis@dsk/com", new string[] { "Administrator" }));
-			_users.Add(new User("someSubject", "Ctripp Paris", "jparis@dsk/com", new string[] { "Administrator" }));
-			_users.Add(new User("someSubject", "some other user", "jparis@dsk/com", new string[] { "Administrator" }));
-			_users.Add(new User("someSubject", "fdsfdsfs", "jparis@dsk/com", new string[] { "Administrator" }));
+
+			string[] userJsonText = File.ReadAllLines("users.json");
+			// use NEwtonsoft.json here to parse the json code.
+
+			_users.Add(new User("someSubject", "Jesse Paris", "jparis@dsk/com", "bio", new string[] { "Administrator" }));
+			_users.Add(new User("someSubject", "Ctripp Paris", "jparis@dsk/com", "bio", new string[] { "Administrator" }));
+			_users.Add(new User("someSubject", "some other user", "jparis@dsk/com", "bio", new string[] { "Administrator" }));
+			_users.Add(new User("someSubject", "fdsfdsfs", "jparis@dsk/com", "bio", new string[] { "Administrator" }));
 
 		}
 
