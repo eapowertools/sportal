@@ -1,0 +1,68 @@
+/* Custom Stylesheet */
+/**
+ * Use this file to override Materialize files so you can update
+ * the core Materialize files in the future
+ *
+ * Made By MaterializeCSS.com
+ */
+
+.icon-block {
+  padding: 0 15px;
+}
+.icon-block .material-icons {
+	font-size: inherit;
+}
+
+/* Cullin Custom Classes */
+
+.qlik-green {
+  background-color: #009845 !important;
+}
+
+.qlik-green-text {
+  color: #009845 !important;
+}
+
+.qlik-stone {
+  background-color: #c4cfda !important;
+}
+
+.qlik-stone-text {
+  color: #c4cfda !important;
+}
+
+.qlik-tanzanite {
+  background-color: #1C355e !important;
+}
+
+.qlik-tanzanite-text {
+  color: #1C355e !important;
+}
+
+.qlik-chip {
+	color: #54565A !important;
+  }
+
+img.responsive-img-custom,
+video.responsive-video {
+  max-width: 40%;
+  height: auto;
+}
+
+.chip:hover {
+	cursor: pointer;
+}
+
+.bio {
+  /* display: none */
+}
+
+.bio:hover {
+  display: block;
+}
+
+textarea#certInfoTextarea {
+  color: white;
+}
+
+/* End Cullin Custom Classes */ 
