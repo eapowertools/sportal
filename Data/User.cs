@@ -10,15 +10,18 @@ namespace sportal.Data
 
 		public string Email { get; private set; }
 
+		public string Title { get; private set; }
+
 		public string Biography { get; private set; }
 
 		public string[] Groups { get; private set; }
 
-		public User(string subject, string displayName, string email, string biography, string[] groups)
+		public User(string subject, string displayName, string email, string title, string biography, string[] groups)
 		{
 			this.Subject = subject;
 			this.DisplayName = displayName;
 			this.Email = email;
+			this.Title = title;
 			this.Biography = biography;
 			this.Groups = groups;
 		}
