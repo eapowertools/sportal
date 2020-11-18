@@ -1,5 +1,11 @@
 ﻿@using sportal.Data
+@using sportal.Services
+@using System.Net.Http
+@using System.Net.Http.Headers
+@inject IJSRuntime JSRuntime;
 @inject UserService UserServiceInstance
+@inject JWTService JWTServiceInstance
+
 
 <div class="row">
     <div class="card qlik-tanzanite z-depth-4 col s2 offset-s2">
@@ -46,7 +52,7 @@
 
 <div class="row">
 
-    @foreach (User u in users)
+    @foreach (User u in _users)
     {
 <div class="card qlik-green z-depth-4 col s12 m6 l3">
     <div class="card-content white-text">
@@ -71,8 +77,7 @@
                         South
                     </div>
                 </div>
-            </div><a class="btn-floating halfway-fab waves-effect waves-light qlik-tanzanite" target="_blank"
-                     onclick="login(@u.Subject)">
+            </div><a class="btn-floating halfway-fab waves-effect waves-light qlik-tanzanite" target="_blank" @onclick="@(e => LoginButton(e, u))">
                 <i class="material-icons">arrow_right_alt</i>
             </a>
         </div>
@@ -82,12 +87,25 @@
 
 </div>
 
-@code { private User[] users;
+@code { private User[] _users;
+    private HttpClient _httpClient;
 
     protected override async Task OnInitializedAsync()
     {
-        users = await UserServiceInstance.GetUserListAsync();
-    } }
+        _users = await UserServiceInstance.GetUserListAsync();
+        _httpClient = new HttpClient();
+    }
+
+    private async Task LoginButton(MouseEventArgs e, User u)
+    {
+        Console.WriteLine("sample output.");
+
+        // get JWT token
+        LoginObject lo = await JWTServiceInstance.GetLoginObject(u);
+
+        // make call to login
+        var test = await JSRuntime.InvokeAsync<string>("blazorExtensions.JWTLogin", lo.Hostname, lo.WebIntegrationID, lo.JWTToken);
+    }}
 
 
 <footer class="page-footer qlik-tanzanite">

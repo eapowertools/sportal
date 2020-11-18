@@ -16,6 +16,23 @@
     <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection" />
     <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
     <link rel="stylesheet" href="https://unpkg.com/treeflex/dist/css/treeflex.css">
+    <script>window.blazorExtensions = {
+            JWTLogin: function (hostname, webIntegrationID, jwtToken) {
+                return fetch("https://" + hostname + "/login/jwt-session?qlik-web-integration-id=" + webIntegrationID, {
+                    method: 'POST',
+                    credentials: 'include',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + jwtToken,
+                        'qlik-web-integration-id': webIntegrationID
+                    },
+                    rejectUnauthorized: false
+                }).then(function () {
+                    window.open("https://" + hostname + "/", "_blank");
+                });
+            }
+        }</script>
 </head>
 <body>
     <app>
