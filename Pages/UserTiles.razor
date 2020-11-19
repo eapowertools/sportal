@@ -7,14 +7,56 @@
 @inject JWTService JWTServiceInstance
 
 
-<div class="row">
-    <div class="card qlik-tanzanite z-depth-4 col s2 offset-s2">
+
+
+<div class="mat-layout-grid">
+    <div class="mat-layout-grid-inner">
+
+        @foreach (User u in _users)
+        {
+
+<MatCard class="mat-layout-grid-cell mat-layout-grid-cell-span-3-desktop mat-layout-grid-cell-span-4-tablet mat-layout-grid-cell-span-4-phone">
+    <MatCardContent id="cardBodyContent">
+        <div class="demo-mat-card-content">
+            <MatHeadline6 class="demo-mat-card-clean-margin">@u.DisplayName</MatHeadline6>
+            <MatSubtitle2 class="demo-mat-card-clean-margin">@u.Title</MatSubtitle2>
+            <img src="img/emily_t.png" alt="" class="circle responsive-img-custom valign">
+            <div>
+                <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">@u.Biography</MatBody2>
+                <br>
+
+
+                <MatChipSet Filter="true" @bind-SelectedChips="selectedChips">
+
+                    @foreach (string group in u.Groups)
+                    {
+    <MatChip Label="@group"></MatChip>}
+                </MatChipSet>
+            </div>
+            @*<a class="btn-floating halfway-fab waves-effect waves-light qlik-tanzanite" target="_blank" @onclick="@(e => LoginButton(e, u))">
+                    <i class="material-icons">arrow_right_alt</i>
+                </a>*@
+        </div>
+    </MatCardContent>
+    <MatCardActions>
+
+        <MatCardActionIcons>
+            <MatIconButton Icon="@MatIconNames.Arrow_forward"></MatIconButton>
+        </MatCardActionIcons>
+    </MatCardActions>
+</MatCard> @*<div class="card qlik-green z-depth-4 col s12 m6 l3">
         <div class="card-content white-text">
-            <span class="card-title">AD Groups</span>
-            <br>
+            <span class="card-title">@u.Title</span>
             <div class="row center-align valign-wrapper">
+
                 <div class="col 12">
+                    <img src="img/emily_t.png" alt="" class="circle responsive-img-custom valign">
+                    <div class="caption center-align">
+                        <h5>@u.DisplayName</h5>
+                    </div>
                     <div>
+                        <p class="bio">@u.Biography</p>
+                        <br>
                         <div class="chip qlik-chip qlik-stone-text btn-executive" onclick="chipShowHide(event)">
                             Executive
                         </div>
@@ -24,77 +66,24 @@
                         <div class="chip qlik-chip qlik-stone-text btn-south" onclick="chipShowHide(event)">
                             South
                         </div>
-                        <div class="chip qlik-chip qlik-stone-text btn-sales" onclick="chipShowHide(event)">
-                            Sales
-                        </div>
-                        <div class="chip qlik-chip qlik-stone-text btn-supplychain" onclick="chipShowHide(event)">
-                            Supply Chain
-                        </div>
-                        <div class="chip qlik-chip qlik-stone-text btn-marketing" onclick="chipShowHide(event)">
-                            Marketing
-                        </div>
-                        <div class="chip qlik-chip qlik-stone-text btn-qlikdeveloper" onclick="chipShowHide(event)">
-                            Qlik Developer
-                        </div>
-                        <div class="chip qlik-chip qlik-stone-text btn-it" onclick="chipShowHide(event)">
-                            IT
-                        </div>
-                        <div class="chip qlik-chip qlik-stone-text btn-external" onclick="chipShowHide(event)">
-                            External
-                        </div>
                     </div>
-                </div>
+                </div><a class="btn-floating halfway-fab waves-effect waves-light qlik-tanzanite" target="_blank" @onclick="@(e => LoginButton(e, u))">
+                    <i class="material-icons">arrow_right_alt</i>
+                </a>
             </div>
 
         </div>
+    </div>*@}
     </div>
 </div>
 
-<div class="row">
-
-    @foreach (User u in _users)
-    {
-<div class="card qlik-green z-depth-4 col s12 m6 l3">
-    <div class="card-content white-text">
-        <span class="card-title">@u.Title</span>
-        <div class="row center-align valign-wrapper">
-
-            <div class="col 12">
-                <img src="img/emily_t.png" alt="" class="circle responsive-img-custom valign">
-                <div class="caption center-align">
-                    <h5>@u.DisplayName</h5>
-                </div>
-                <div>
-                    <p class="bio">@u.Biography</p>
-                    <br>
-                    <div class="chip qlik-chip qlik-stone-text btn-executive" onclick="chipShowHide(event)">
-                        Executive
-                    </div>
-                    <div class="chip qlik-chip qlik-stone-text btn-north" onclick="chipShowHide(event)">
-                        North
-                    </div>
-                    <div class="chip qlik-chip qlik-stone-text btn-south" onclick="chipShowHide(event)">
-                        South
-                    </div>
-                </div>
-            </div><a class="btn-floating halfway-fab waves-effect waves-light qlik-tanzanite" target="_blank" @onclick="@(e => LoginButton(e, u))">
-                <i class="material-icons">arrow_right_alt</i>
-            </a>
-        </div>
-
-    </div>
-</div>}
-
-</div>
-
-@code { private string _publicKey;
-    private User[] _users;
+@code { private User[] _users;
     private HttpClient _httpClient;
+    MatChip[] selectedChips = null;
 
     protected override async Task OnInitializedAsync()
     {
         _users = await UserServiceInstance.GetUserListAsync();
-        _publicKey = JWTServiceInstance.GetPublicKey();
         _httpClient = new HttpClient();
     }
 
@@ -108,19 +97,3 @@
     }}
 
 
-<footer class="page-footer qlik-tanzanite">
-    <div class="container">
-        <div class="row">
-            <div class="col l6 s12">
-                <h5 class="white-text">Information</h5>
-                <p class="grey-text text-lighten-4">Developed by Cullin Tripp to demonstrate user personas with Qlik SaaS.</p>
-            </div>
-        </div>
-
-    </div>
-    <div class="footer-copyright">
-        <div class="container">
-            Made by <a class="white-text text-lighten-3" href="http://materializecss.com">Materialize</a>
-        </div>
-    </div>
-</footer>
