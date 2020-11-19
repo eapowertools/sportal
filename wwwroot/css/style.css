@@ -6,63 +6,68 @@
  * Made By MaterializeCSS.com
  */
 
+
 .icon-block {
-  padding: 0 15px;
+    padding: 0 15px;
 }
-.icon-block .material-icons {
-	font-size: inherit;
-}
+
+    .icon-block .material-icons {
+        font-size: inherit;
+    }
 
 /* Cullin Custom Classes */
 
 .qlik-green {
-  background-color: #009845 !important;
+    background-color: #009845 !important;
 }
 
 .qlik-green-text {
-  color: #009845 !important;
+    color: #009845 !important;
 }
 
 .qlik-stone {
-  background-color: #c4cfda !important;
+    background-color: #c4cfda !important;
 }
 
 .qlik-stone-text {
-  color: #c4cfda !important;
+    color: #c4cfda !important;
 }
 
 .qlik-tanzanite {
-  background-color: #1C355e !important;
+    background-color: #1C355e !important;
 }
 
 .qlik-tanzanite-text {
-  color: #1C355e !important;
+    color: #1C355e !important;
 }
 
 .qlik-chip {
-	color: #54565A !important;
-  }
+    color: #54565A !important;
+}
 
 img.responsive-img-custom,
 video.responsive-video {
-  max-width: 40%;
-  height: auto;
+    max-width: 40%;
+    height: auto;
 }
 
 .chip:hover {
-	cursor: pointer;
-}
-
-.bio {
-  /* display: none */
+    cursor: pointer;
 }
 
 .bio:hover {
-  display: block;
+    display: block;
 }
 
-textarea#certInfoTextarea {
-  color: white;
+/* End Cullin Custom Classes */
+
+/* Location Formatting */
+#settingsButton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
 }
 
-/* End Cullin Custom Classes */ 
+.mdc-dialog__surface {
+    min-width: 60vw !important;
+}
