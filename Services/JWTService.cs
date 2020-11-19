@@ -86,11 +86,10 @@ namespace sportal.Services
 			}
 		}
 
-		public string GetPublicKey()
+		public Task<string> GetPublicKey()
 		{
 			var certBytes = _certificate.GetRawCertData();
-			var certString = Convert.ToBase64String(certBytes);
-			return certString;
+			return Task.FromResult(Convert.ToBase64String(certBytes));
 		}
 
 		public string GenerateToken(User user)

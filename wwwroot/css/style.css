@@ -7,14 +7,6 @@
  */
 
 
-.icon-block {
-    padding: 0 15px;
-}
-
-    .icon-block .material-icons {
-        font-size: inherit;
-    }
-
 /* Cullin Custom Classes */
 
 .qlik-green {
@@ -41,26 +33,13 @@
     color: #1C355e !important;
 }
 
-.qlik-chip {
-    color: #54565A !important;
-}
-
-img.responsive-img-custom,
-video.responsive-video {
-    max-width: 40%;
-    height: auto;
-}
-
-.chip:hover {
-    cursor: pointer;
-}
-
-.bio:hover {
-    display: block;
-}
-
 /* End Cullin Custom Classes */
 
+/* Spacing Formatting */
+h6 {
+    margin-block-start: .33em !important;
+    margin-block-end: .33em !important;
+}
 /* Location Formatting */
 #settingsButton {
     position: fixed;
@@ -70,4 +49,8 @@ video.responsive-video {
 
 .mdc-dialog__surface {
     min-width: 60vw !important;
+}
+
+#cardBodyContent {
+    height: 100%;
 }

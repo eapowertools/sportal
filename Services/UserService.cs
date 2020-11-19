@@ -96,8 +96,15 @@ namespace sportal.Services
 				string email = userObject["email"].ToString();
 				string title = userObject["title"].ToString();
 				string bio = userObject["biography"].ToString();
+				IEnumerable<JToken> groups = userObject["groups"].Children();
 
-				_users.Add(new User(sub, name, email, title, bio, new string[] { }));
+				List<string> groupList = new List<string>();
+				foreach (JToken group in groups)
+				{
+					groupList.Add(group.ToString());
+				}
+
+				_users.Add(new User(sub, name, email, title, bio, groupList.ToArray()));
 
 			}
 

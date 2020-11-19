@@ -20,10 +20,10 @@
 
         </p>
         <p>
-            <MatTextField @bind-Value="@tempTenantData.Issuer" Label="JWT Issuer" PlaceHolder="name.region.qlikcloud.com" FullWidth="true"></MatTextField>
+            <MatStringField @bind-Value="@tempTenantData.Issuer" Label="JWT Issuer" PlaceHolder="name.region.qlikcloud.com" FullWidth="true"></MatStringField>
         </p>
         <p>
-            <MatTextField @bind-Value="@tempTenantData.KeyID" Label="JWT Key ID" PlaceHolder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" FullWidth="true"></MatTextField>
+            <MatStringField @bind-Value="@tempTenantData.KeyID" Label="JWT Key ID" PlaceHolder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" FullWidth="true"></MatStringField>
         </p>
 
 
@@ -45,7 +45,7 @@
     protected override async Task OnInitializedAsync()
     {
         tempTenantData = new TenantData();
-        publicKey = JWTServiceInstance.GetPublicKey();
+        publicKey = await JWTServiceInstance.GetPublicKey();
     }
 
     void OpenDialog()
