@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -85,24 +86,9 @@ namespace sportal.Services
 
 		public string GenerateToken(User user)
 		{
-			//private key temp
-			SecureString pass = new SecureString();
-			string password = "";
-			for (int i = 0; i < password.Length; i++)
-			{
-				pass.AppendChar(password[i]);
-			}
-			X509Certificate2 cert = new X509Certificate2("/Users/eps/Documents/Qlik_Projects/QCS_SaaS_JWT_Prototype/certs/cert.pfx", pass);
-
-
-			var mySecret = "";
-
-
 			var tokenHandler = new JwtSecurityTokenHandler();
-
-			//System.Security.Cryptography.RSA rsa = new
-			RsaSecurityKey securityKey = new RsaSecurityKey(RSACertificateExtensions.GetRSAPrivateKey(cert));
-			securityKey.KeyId = mySecret;
+			RsaSecurityKey securityKey = new RsaSecurityKey(RSACertificateExtensions.GetRSAPrivateKey(_tenantData.Certificate));
+			securityKey.KeyId = _tenantData.KeyID;
 			var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256);
 
 			var tokenDescriptor = new SecurityTokenDescriptor
@@ -113,15 +99,17 @@ namespace sportal.Services
 					new Claim("subType", "user"),
 					new Claim("name", user.DisplayName),
 					new Claim("email", user.Email),
-					new Claim("email_verified", "true", ClaimValueTypes.Boolean),
-					new Claim("groups", "IT"),
-					new Claim("groups", "Marketing")
+					new Claim("email_verified", "true", ClaimValueTypes.Boolean)
 				}),
 				Expires = DateTime.UtcNow.AddHours(3),
 				Issuer = _tenantData.Hostname,
 				Audience = "qlik.api/login/jwt-session",
 				SigningCredentials = signingCredentials
 			};
+			for (int i = 0; i < user.Groups.Length; i++)
+			{
+				tokenDescriptor.Subject.AddClaim(new Claim("groups", user.Groups[i]));
+			}
 
 			var token = tokenHandler.CreateToken(tokenDescriptor);
 			string jwtToken = tokenHandler.WriteToken(token);

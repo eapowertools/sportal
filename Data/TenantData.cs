@@ -10,9 +10,9 @@ namespace sportal.Data
 
 		public string WebIntegrationID { get; set; }
 
-		public X509Certificate2 Certificate { get; set; }
+		public string KeyID { get; set; }
 
-		public RSA PrivateKey { get; set; }
+		public X509Certificate2 Certificate { get; set; }
 
 		public TenantData()
 		{
