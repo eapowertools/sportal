@@ -12,10 +12,21 @@
     <base href="~/" />
 
     <!-- CSS  -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection" />
+    <script src="_content/MatBlazor/dist/matBlazor.js"></script>
+    <link href="_content/MatBlazor/dist/matBlazor.css" rel="stylesheet" />
     <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
-    <link rel="stylesheet" href="https://unpkg.com/treeflex/dist/css/treeflex.css">
+</head>
+<body>
+    <app>
+        <component type="typeof(App)" render-mode="ServerPrerendered" />
+    </app>
+
+    <script src="_framework/blazor.server.js"></script>
+
+    <!--  Scripts-->
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+    <!-- Materialize Initializers-->
     <script>window.blazorExtensions = {
             JWTLogin: function (hostname, webIntegrationID, jwtToken) {
                 return fetch("https://" + hostname + "/login/jwt-session?qlik-web-integration-id=" + webIntegrationID, {
@@ -31,31 +42,17 @@
                 }).then(function () {
                     window.open("https://" + hostname + "/", "_blank");
                 });
+            },
+            CopyToClipboard: function () {
+                var copyText = document.getElementById("publicKey");
+
+                /* Select the text field */
+                copyText.select();
+                copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+                /* Copy the text inside the text field */
+                document.execCommand("copy");
             }
         }</script>
-</head>
-<body>
-    <app>
-        <component type="typeof(App)" render-mode="ServerPrerendered" />
-    </app>
-
-    <div id="blazor-error-ui">
-        <environment include="Staging,Production">
-            An error has occurred. This application may no longer respond until reloaded.
-        </environment>
-        <environment include="Development">
-            An unhandled exception has occurred. See browser dev tools for details.
-        </environment>
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
-
-    <script src="_framework/blazor.server.js"></script>
-
-    <!--  Scripts-->
-    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script src="js/materialize.js"></script>
-    <script src="js/init.js"></script>
-    <script src="js/index.js"></script>
 </body>
 </html>

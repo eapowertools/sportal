@@ -1,0 +1,67 @@
+﻿@using sportal.Data
+@using sportal.Services
+
+@inject IJSRuntime JSRuntime;
+@inject JWTService JWTServiceInstance
+
+<MatDialog Id="settingsDialog" @bind-IsOpen="@dialogIsOpen">
+    <MatDialogTitle>QCS Tenant Settings</MatDialogTitle>
+    <MatDialogContent>
+        <p>
+            <MatTextField @bind-Value="@tempTenantData.Hostname" Label="Hostname" PlaceHolder="name.region.qlikcloud.com" FullWidth="true"></MatTextField>
+        </p>
+        <p>
+            <MatTextField @bind-Value="@tempTenantData.WebIntegrationID" Label="Web Integration ID" PlaceHolder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" FullWidth="true"></MatTextField>
+        </p>
+        <br />
+        <p>
+            <MatTextField Id="publicKey" @bind-Value="@publicKey" Label="JWT Certificate" ReadOnly="true" FullWidth="true"></MatTextField>
+            <MatButton Dense="true" OnClick="@CopyToClipboard">Copy to Clipboard</MatButton>
+
+        </p>
+        <p>
+            <MatTextField @bind-Value="@tempTenantData.Issuer" Label="JWT Issuer" PlaceHolder="name.region.qlikcloud.com" FullWidth="true"></MatTextField>
+        </p>
+        <p>
+            <MatTextField @bind-Value="@tempTenantData.KeyID" Label="JWT Key ID" PlaceHolder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" FullWidth="true"></MatTextField>
+        </p>
+
+
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; })">Cancel</MatButton>
+        <MatButton OnClick="@SaveClick">Save</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+<MatIconButton Id="settingsButton" Icon="settings" OnClick="@OpenDialog" Raised="true"></MatIconButton>
+
+@code
+        {
+    TenantData tempTenantData;
+    string publicKey;
+    bool dialogIsOpen = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tempTenantData = new TenantData();
+        publicKey = JWTServiceInstance.GetPublicKey();
+    }
+
+    void OpenDialog()
+    {
+        dialogIsOpen = true;
+    }
+
+    void SaveClick()
+    {
+        dialogIsOpen = false;
+    }
+
+    private async Task CopyToClipboard()
+    {
+        await JSRuntime.InvokeAsync<string>("blazorExtensions.CopyToClipboard");
+    }
+}
+
+

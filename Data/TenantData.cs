@@ -11,6 +11,8 @@ namespace sportal.Data
 
 		public string WebIntegrationID { get; set; }
 
+		public string Issuer { get; set; }
+
 		public string KeyID { get; set; }
 
 		public byte[] Certificate { get; set; }

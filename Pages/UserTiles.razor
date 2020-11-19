@@ -100,13 +100,11 @@
 
     private async Task LoginButton(MouseEventArgs e, User u)
     {
-        Console.WriteLine("sample output.");
-
         // get JWT token
         LoginObject lo = await JWTServiceInstance.GetLoginObject(u);
 
         // make call to login
-        var test = await JSRuntime.InvokeAsync<string>("blazorExtensions.JWTLogin", lo.Hostname, lo.WebIntegrationID, lo.JWTToken);
+        await JSRuntime.InvokeAsync<string>("blazorExtensions.JWTLogin", lo.Hostname, lo.WebIntegrationID, lo.JWTToken);
     }}
 
 
@@ -116,13 +114,6 @@
             <div class="col l6 s12">
                 <h5 class="white-text">Information</h5>
                 <p class="grey-text text-lighten-4">Developed by Cullin Tripp to demonstrate user personas with Qlik SaaS.</p>
-            </div>
-            <div class="col l6 s12">
-                <p class="grey-text text-lighten-4">Use the certificate below to enable JWT:</p>
-                <textarea id="certInfoTextarea">@_publicKey</textarea>
-                <div class="chip qlik-tanzanite-text" onclick="copyCertificate()">
-                    Copy Public Key
-                </div>
             </div>
         </div>
 

@@ -47,7 +47,6 @@ namespace sportal.Services
 
 				SaveTenantData();
 			}
-
 		}
 
 		private void SaveTenantData()
@@ -82,7 +81,6 @@ namespace sportal.Services
 				request.CertificateExtensions.Add(sanBuilder.Build());
 
 				X509Certificate2 certificate = request.CreateSelfSigned(new DateTimeOffset(DateTime.UtcNow.AddDays(-1)), new DateTimeOffset(DateTime.UtcNow.AddDays(3650)));
-				//certificate.FriendlyName = CertificateName;
 
 				return certificate;
 			}
@@ -113,7 +111,7 @@ namespace sportal.Services
 					new Claim("email_verified", "true", ClaimValueTypes.Boolean)
 				}),
 				Expires = DateTime.UtcNow.AddHours(3),
-				Issuer = _tenantData.Hostname,
+				Issuer = _tenantData.Issuer,
 				Audience = "qlik.api/login/jwt-session",
 				SigningCredentials = signingCredentials
 			};
@@ -130,7 +128,6 @@ namespace sportal.Services
 
 		public async Task<LoginObject> GetLoginObject(User u)
 		{
-			Console.WriteLine(_userService);
 			Task<LoginObject> loginObjectTask = new Task<LoginObject>(() =>
 			{
 				LoginObject loginObject = new LoginObject() { Hostname = _tenantData.Hostname, WebIntegrationID = _tenantData.WebIntegrationID };
