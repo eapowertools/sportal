@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -27,26 +28,37 @@ namespace sportal.Services
 			//try to load tenant data file
 			if (File.Exists("tenantData.tdf"))
 			{
-				//userString = File.ReadAllText("users.json");
-
+				Stream openFileStream = File.OpenRead("tenantData.tdf");
+				BinaryFormatter deserializer = new BinaryFormatter();
+				_tenantData = (TenantData)deserializer.Deserialize(openFileStream);
+				openFileStream.Close();
 			}
 			else
 			{
 				_tenantData = new TenantData();
-				_tenantData.WebIntegrationID = "vXkk89R3iLz74ft1LJo-L5tV9F7gDMc1";
-				_tenantData.Hostname = "jesseparis.us.qlikcloud.com";
+				_tenantData.WebIntegrationID = "";
+				_tenantData.Hostname = "";
+				_tenantData.Certificate = GenerateCertificate();
+
+				SaveTenantData();
 			}
 
 		}
 
-		private static X509Certificate2 buildSelfSignedServerCertificate()
+		private void SaveTenantData()
 		{
-			string CertificateName = "test";
+			Stream SaveFileStream = File.Create("tenantData.tdf");
+			BinaryFormatter serializer = new BinaryFormatter();
+			serializer.Serialize(SaveFileStream, _tenantData);
+			SaveFileStream.Close();
+		}
+
+		private X509Certificate2 GenerateCertificate()
+		{
+			string CertificateName = "sportal.qlikcloud.com";
 			SubjectAlternativeNameBuilder sanBuilder = new SubjectAlternativeNameBuilder();
-			//sanBuilder.AddIpAddress("qlikcloud");
-			//sanBuilder.AddIpAddress(IPAddress.IPv6Loopback);
 			sanBuilder.AddDnsName("localhost");
-			sanBuilder.AddDnsName(Environment.MachineName);
+			sanBuilder.AddDnsName("qlikcloud.com");
 
 			X500DistinguishedName distinguishedName = new X500DistinguishedName($"CN={CertificateName}");
 
@@ -67,7 +79,7 @@ namespace sportal.Services
 				X509Certificate2 certificate = request.CreateSelfSigned(new DateTimeOffset(DateTime.UtcNow.AddDays(-1)), new DateTimeOffset(DateTime.UtcNow.AddDays(3650)));
 				certificate.FriendlyName = CertificateName;
 
-				return new X509Certificate2(certificate.Export(X509ContentType.Pfx, "WeNeedASaf3rPassword"), "WeNeedASaf3rPassword", X509KeyStorageFlags.MachineKeySet);
+				return certificate;
 			}
 		}
 
@@ -75,18 +87,15 @@ namespace sportal.Services
 		{
 			//private key temp
 			SecureString pass = new SecureString();
-			string password = "1q2w3e4r";
+			string password = "";
 			for (int i = 0; i < password.Length; i++)
 			{
 				pass.AppendChar(password[i]);
 			}
 			X509Certificate2 cert = new X509Certificate2("/Users/eps/Documents/Qlik_Projects/QCS_SaaS_JWT_Prototype/certs/cert.pfx", pass);
 
-			//byte[] key = File.ReadAllBytes("/Users/eps/Documents/Qlik_Projects/QCS_SaaS_JWT_Prototype/certs/key.pem");
 
-
-
-			var mySecret = "e0b264af-d18e-4ff6-abe8-86b7febdff3b";
+			var mySecret = "";
 
 
 			var tokenHandler = new JwtSecurityTokenHandler();
@@ -118,12 +127,6 @@ namespace sportal.Services
 			string jwtToken = tokenHandler.WriteToken(token);
 			Console.WriteLine(jwtToken);
 			return jwtToken;
-		}
-
-		private string GenerateJWTToken(User user)
-		{
-
-			return "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImUwYjI2NGFmLWQxOGUtNGZmNi1hYmU4LTg2YjdmZWJkZmYzYiJ9.eyJzdWIiOiJTYWFTUC1lNzk3ZDA5NC03MTZhLTQzNmQtYTU2Yi1lNjcxNDRjNWZiYjQiLCJzdWJUeXBlIjoidXNlciIsIm5hbWUiOiJFbWlseSBUaWVybmVuIiwiZW1haWwiOiJlbWlseS50aWVybmVuQHNhYXNwZXJzb25hcy5kZXYiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZ3JvdXBzIjpbXSwiaWF0IjoxNjA1NjQwNzc1LCJleHAiOjE2MDU2NTE1NzUsImF1ZCI6InFsaWsuYXBpL2xvZ2luL2p3dC1zZXNzaW9uIiwiaXNzIjoiamVzc2VwYXJpcy51cy5xbGlrY2xvdWQuY29tIn0.TLi08ze_WOl2EP3PKaxofD_nkeWuoz9rcGCGIFcADOKQwaolnm0z0gYeKBtJb-a1MfgcubPNCZJZIn9yGhGzr8anPifLhHKI9xILS9ZHOjDB3WwRyHjbTKmnBanNpGYzEe93L2LsLXSm77T9lMJvTQ9VZPE_Z7JtRpJRXtWow0x1kKPrUtbBHQpIhVc7i8rpyREj5haltb9plxFg-h5mRbj3zBsaRZsLxdyyJdkXtvGsLQr-POhdW9Qm1W4qkOblqYe7NRLCTa0Uc8ZbGZ4gOfWIRrJesYnOErj-b1pHEU1cE8OPuVDAzKf0aIXOh49G-9PgfbyNyc9sBEPMdZCN5A";
 		}
 
 		public async Task<LoginObject> GetLoginObject(User u)
