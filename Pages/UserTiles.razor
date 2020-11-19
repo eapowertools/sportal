@@ -87,12 +87,14 @@
 
 </div>
 
-@code { private User[] _users;
+@code { private string _publicKey;
+    private User[] _users;
     private HttpClient _httpClient;
 
     protected override async Task OnInitializedAsync()
     {
         _users = await UserServiceInstance.GetUserListAsync();
+        _publicKey = JWTServiceInstance.GetPublicKey();
         _httpClient = new HttpClient();
     }
 
@@ -117,7 +119,7 @@
             </div>
             <div class="col l6 s12">
                 <p class="grey-text text-lighten-4">Use the certificate below to enable JWT:</p>
-                <textarea id="certInfoTextarea"></textarea>
+                <textarea id="certInfoTextarea">@_publicKey</textarea>
                 <div class="chip qlik-tanzanite-text" onclick="copyCertificate()">
                     Copy Public Key
                 </div>

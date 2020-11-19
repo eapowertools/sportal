@@ -4,6 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace sportal.Data
 {
+	[Serializable]
 	public class TenantData
 	{
 		public string Hostname { get; set; }
@@ -12,10 +13,6 @@ namespace sportal.Data
 
 		public string KeyID { get; set; }
 
-		public X509Certificate2 Certificate { get; set; }
-
-		public TenantData()
-		{
-		}
+		public byte[] Certificate { get; set; }
 	}
 }

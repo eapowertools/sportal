@@ -22,6 +22,8 @@ namespace sportal.Services
 
 		private UserService _userService;
 
+		private X509Certificate2 _certificate;
+
 		public JWTService(UserService userService)
 		{
 			_userService = userService;
@@ -33,13 +35,15 @@ namespace sportal.Services
 				BinaryFormatter deserializer = new BinaryFormatter();
 				_tenantData = (TenantData)deserializer.Deserialize(openFileStream);
 				openFileStream.Close();
+				_certificate = new X509Certificate2(_tenantData.Certificate);
 			}
 			else
 			{
 				_tenantData = new TenantData();
 				_tenantData.WebIntegrationID = "";
 				_tenantData.Hostname = "";
-				_tenantData.Certificate = GenerateCertificate();
+				_certificate = GenerateCertificate();
+				_tenantData.Certificate = _certificate.Export(X509ContentType.Pkcs12);
 
 				SaveTenantData();
 			}
@@ -78,16 +82,23 @@ namespace sportal.Services
 				request.CertificateExtensions.Add(sanBuilder.Build());
 
 				X509Certificate2 certificate = request.CreateSelfSigned(new DateTimeOffset(DateTime.UtcNow.AddDays(-1)), new DateTimeOffset(DateTime.UtcNow.AddDays(3650)));
-				certificate.FriendlyName = CertificateName;
+				//certificate.FriendlyName = CertificateName;
 
 				return certificate;
 			}
 		}
 
+		public string GetPublicKey()
+		{
+			var certBytes = _certificate.GetRawCertData();
+			var certString = Convert.ToBase64String(certBytes);
+			return certString;
+		}
+
 		public string GenerateToken(User user)
 		{
 			var tokenHandler = new JwtSecurityTokenHandler();
-			RsaSecurityKey securityKey = new RsaSecurityKey(RSACertificateExtensions.GetRSAPrivateKey(_tenantData.Certificate));
+			RsaSecurityKey securityKey = new RsaSecurityKey(RSACertificateExtensions.GetRSAPrivateKey(_certificate));
 			securityKey.KeyId = _tenantData.KeyID;
 			var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256);
 
@@ -129,7 +140,6 @@ namespace sportal.Services
 			loginObjectTask.Start();
 
 			return await loginObjectTask;
-
 		}
 	}
 }
