@@ -22,7 +22,7 @@
         },
         {
             "label": "publish-windows-self-contained",
-            "args": ["dotnet", "publish", "-r", "win-x64", "-p:PublishSingleFile=True", "-p:PublishTrimmed=true", "--self-contained", "true"],
+            "args": ["dotnet", "publish", "-r", "win-x64", "-p:PublishSingleFile=True", "-p:PublishTrimmed=false", "--self-contained", "true", "--configuration", "Release"],
             "command": "",
             "type": "shell",
             "problemMatcher": "$msCompile"
