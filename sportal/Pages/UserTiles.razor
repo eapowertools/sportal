@@ -18,7 +18,7 @@
         <div class="demo-mat-card-content">
             <MatHeadline6 class="demo-mat-card-clean-margin">@u.DisplayName</MatHeadline6>
             <MatSubtitle2 class="demo-mat-card-clean-margin">@u.Title</MatSubtitle2>
-            <img src="img/emily_t.png" alt="" class="circle responsive-img-custom valign">
+            <img src="data:image/png;base64, @u.Image" alt="" class="circle responsive-img-custom valign">
             <div>
                 <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">@u.Biography</MatBody2>
                 <br>
@@ -28,7 +28,7 @@
 
                     @foreach (string group in u.Groups)
                     {
-    <MatChip Label="@group"></MatChip>}
+<MatChip Label="@group"></MatChip>}
                 </MatChipSet>
             </div>
             @*<a class="btn-floating halfway-fab waves-effect waves-light qlik-tanzanite" target="_blank" @onclick="@(e => LoginButton(e, u))">
