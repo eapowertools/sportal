@@ -7,7 +7,7 @@
  */
 
 
-/* Cullin Custom Classes */
+/* Custom Colors */
 
 .qlik-green {
     background-color: #009845 !important;
@@ -33,7 +33,9 @@
     color: #1C355e !important;
 }
 
-/* End Cullin Custom Classes */
+.white-text {
+    color: white !important;
+}
 
 /* Spacing Formatting */
 h6 {
@@ -53,4 +55,18 @@ h6 {
 
 #cardBodyContent {
     height: 100%;
+    color: white;
+    margin: 5%;
+}
+/* Custom Compenents*/
+
+.mdc-icon-button {
+    color: white;
+    background-color: #1C355e;
+    border-radius: 50%;
+    text-align: center;
+}
+
+#groupsBox {
+    margin: 5%;
 }

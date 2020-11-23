@@ -13,20 +13,19 @@
 </div>
 
 <div class="row">
-    <div class="card qlik-tanzanite z-depth-4 col s2 offset-s2">
-        <div class="card-content white-text">
-            <span class="card-title">AD Groups</span>
-            <br>
+    <MatCard class="card qlik-tanzanite z-depth-4 col s2 offset-s2">
+        <MatCardContent class="card-content white-text">
+            <MatHeadline6>AD Groups</MatHeadline6>
             <MatChipSet Filter="true" @bind-SelectedChips="selectedChips">
 
                 @foreach (string group in groups)
                 {
-    <MatChip Label="@group"></MatChip>}
+                    <MatChip Label="@group"></MatChip>}
             </MatChipSet>
 
 
-        </div>
-    </div>
+        </MatCardContent>
+    </MatCard>
 </div>
 
 @code{ string[] groups = { "Executive", "North", "South", "Sales", "Supply Chain", "Marketing", "Qlik Developer", "IT", "External" };
