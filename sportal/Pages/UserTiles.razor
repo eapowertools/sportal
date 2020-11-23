@@ -30,7 +30,7 @@
 
                     @foreach (string group in u.Groups)
                     {
-<MatChip Label="@group"></MatChip>}
+    <MatChip Label="@group"></MatChip>}
                 </MatChipSet>
             </div>
             @*<a class="btn-floating halfway-fab waves-effect waves-light qlik-tanzanite" target="_blank" @onclick="@(e => LoginButton(e, u))">
@@ -41,39 +41,10 @@
     <MatCardActions>
 
         <MatCardActionIcons>
-            <MatIconButton Icon="@MatIconNames.Arrow_forward"></MatIconButton>
+            <MatIconButton Icon="@MatIconNames.Arrow_forward" OnClick="@(e => LoginButton(e, u))"></MatIconButton>
         </MatCardActionIcons>
     </MatCardActions>
-</MatCard> @*<div class="card qlik-green z-depth-4 col s12 m6 l3">
-        <div class="card-content white-text">
-            <span class="card-title">@u.Title</span>
-            <div class="row center-align valign-wrapper">
-
-                <div class="col 12">
-                    <img src="img/emily_t.png" alt="" class="circle responsive-img-custom valign">
-                    <div class="caption center-align">
-                        <h5>@u.DisplayName</h5>
-                    </div>
-                    <div>
-                        <p class="bio">@u.Biography</p>
-                        <br>
-                        <div class="chip qlik-chip qlik-stone-text btn-executive" onclick="chipShowHide(event)">
-                            Executive
-                        </div>
-                        <div class="chip qlik-chip qlik-stone-text btn-north" onclick="chipShowHide(event)">
-                            North
-                        </div>
-                        <div class="chip qlik-chip qlik-stone-text btn-south" onclick="chipShowHide(event)">
-                            South
-                        </div>
-                    </div>
-                </div><a class="btn-floating halfway-fab waves-effect waves-light qlik-tanzanite" target="_blank" @onclick="@(e => LoginButton(e, u))">
-                    <i class="material-icons">arrow_right_alt</i>
-                </a>
-            </div>
-
-        </div>
-    </div>*@}
+</MatCard>  }
     </div>
 </div>
 
