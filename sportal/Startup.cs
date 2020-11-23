@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using sportal.EmbeddedBlazorContentHelpers;
 using sportal.Services;
 
 namespace sportal
@@ -45,6 +46,11 @@ namespace sportal
 			}
 
 			app.UseStaticFiles();
+			app.UseStaticFiles(new StaticFileOptions()
+			{
+				FileProvider = new EmbeddedBlazorContentProvider(typeof(sportal_static_content.EmptyClass).Assembly),
+				RequestPath = EmbeddedBlazorContentConst.RequestPath.Remove(0, 1),
+			});
 
 			app.UseRouting();
 
