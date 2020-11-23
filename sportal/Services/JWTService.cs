@@ -80,7 +80,7 @@ namespace sportal.Services
 
 				request.CertificateExtensions.Add(sanBuilder.Build());
 
-				X509Certificate2 certificate = request.CreateSelfSigned(new DateTimeOffset(DateTime.UtcNow.AddDays(-1)), new DateTimeOffset(DateTime.UtcNow.AddDays(3650)));
+				X509Certificate2 certificate = request.CreateSelfSigned(new DateTimeOffset(DateTime.UtcNow.AddDays(-1)), new DateTimeOffset(DateTime.UtcNow.AddDays(825)));
 
 				return certificate;
 			}
@@ -125,7 +125,7 @@ namespace sportal.Services
 			return jwtToken;
 		}
 
-		public async Task<LoginObject> GetLoginObject(User u)
+		public async Task<LoginObject> GetLoginObjectAsync(User u)
 		{
 			Task<LoginObject> loginObjectTask = new Task<LoginObject>(() =>
 			{
@@ -136,6 +136,27 @@ namespace sportal.Services
 			loginObjectTask.Start();
 
 			return await loginObjectTask;
+		}
+
+		public Task<TenantData> GetTenantDataAsync()
+		{
+			return Task.FromResult(_tenantData);
+		}
+
+		public void SaveUpdatedTenantData(string hostname, string webIntegrationID, string jwtIssuer, string jwtKeyID)
+		{
+			Task<TenantData> saveTenantDataTask = new Task<TenantData>(() =>
+			{
+				_tenantData.Hostname = hostname;
+				_tenantData.WebIntegrationID = webIntegrationID;
+				_tenantData.Issuer = jwtIssuer;
+				_tenantData.KeyID = jwtKeyID;
+				SaveTenantData();
+				return _tenantData;
+			});
+			saveTenantDataTask.Start();
+
+			return;
 		}
 	}
 }

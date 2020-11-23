@@ -4,26 +4,26 @@
 @inject IJSRuntime JSRuntime;
 @inject JWTService JWTServiceInstance
 
-<MatDialog Id="settingsDialog" @bind-IsOpen="@dialogIsOpen">
+<MatDialog Id="settingsDialog" @bind-IsOpen="@DialogIsOpen">
     <MatDialogTitle>QCS Tenant Settings</MatDialogTitle>
     <MatDialogContent>
         <p>
-            <MatTextField @bind-Value="@tempTenantData.Hostname" Label="Hostname" PlaceHolder="name.region.qlikcloud.com" FullWidth="true"></MatTextField>
+            <MatTextField @bind-Value="@hostname" Label="Hostname" PlaceHolder="name.region.qlikcloud.com" FullWidth="true"></MatTextField>
         </p>
         <p>
-            <MatTextField @bind-Value="@tempTenantData.WebIntegrationID" Label="Web Integration ID" PlaceHolder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" FullWidth="true"></MatTextField>
+            <MatTextField @bind-Value="@webIntegrationID" Label="Web Integration ID" PlaceHolder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" FullWidth="true"></MatTextField>
         </p>
         <br />
         <p>
-            <MatTextField Id="publicKey" @bind-Value="@publicKey" Label="JWT Certificate" ReadOnly="true" FullWidth="true"></MatTextField>
+            <MatTextField Id="publicKey" @bind-Value="@PUBLIC_KEY" Label="JWT Certificate" ReadOnly="true" FullWidth="true"></MatTextField>
             <MatButton Dense="true" OnClick="@CopyToClipboard">Copy to Clipboard</MatButton>
 
         </p>
         <p>
-            <MatStringField @bind-Value="@tempTenantData.Issuer" Label="JWT Issuer" PlaceHolder="name.region.qlikcloud.com" FullWidth="true"></MatStringField>
+            <MatStringField @bind-Value="@jwtIssuer" Label="JWT Issuer" PlaceHolder="name.region.qlikcloud.com" FullWidth="true"></MatStringField>
         </p>
         <p>
-            <MatStringField @bind-Value="@tempTenantData.KeyID" Label="JWT Key ID" PlaceHolder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" FullWidth="true"></MatStringField>
+            <MatStringField @bind-Value="@jwtKeyID" Label="JWT Key ID" PlaceHolder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" FullWidth="true"></MatStringField>
         </p>
 
 
@@ -38,24 +38,56 @@
 
 @code
         {
-    TenantData tempTenantData;
-    string publicKey;
-    bool dialogIsOpen = false;
+    TenantData tenantData;
+    string hostname;
+    string webIntegrationID;
+    string jwtIssuer;
+    string jwtKeyID;
+
+    string PUBLIC_KEY;
+    private bool dialogIsOpen;
+    bool DialogIsOpen
+    {
+        get { return dialogIsOpen; }
+        set
+        {
+            if (value == false)
+            {
+                hostname = tenantData.Hostname;
+                webIntegrationID = tenantData.WebIntegrationID;
+                jwtIssuer = tenantData.Issuer;
+                jwtKeyID = tenantData.KeyID;
+            }
+            dialogIsOpen = value;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        tempTenantData = new TenantData();
-        publicKey = await JWTServiceInstance.GetPublicKey();
+        tenantData = await JWTServiceInstance.GetTenantDataAsync();
+        PUBLIC_KEY = await JWTServiceInstance.GetPublicKey();
+        PUBLIC_KEY = "-----BEGIN CERTIFICATE-----" + PUBLIC_KEY + "-----END CERTIFICATE-----";
+
+        hostname = tenantData.Hostname;
+        webIntegrationID = tenantData.WebIntegrationID;
+        jwtIssuer = tenantData.Issuer;
+        jwtKeyID = tenantData.KeyID;
     }
 
     void OpenDialog()
     {
+        Console.WriteLine("OpenDialog Triggered");
         dialogIsOpen = true;
     }
 
-    void SaveClick()
+    async void SaveClick()
     {
+        tenantData.Hostname = hostname;
+        tenantData.WebIntegrationID = webIntegrationID;
+        tenantData.Issuer = jwtIssuer;
+        tenantData.KeyID = jwtKeyID;
         dialogIsOpen = false;
+        JWTServiceInstance.SaveUpdatedTenantData(hostname, webIntegrationID, jwtIssuer, jwtKeyID);
     }
 
     private async Task CopyToClipboard()
