@@ -12,5 +12,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
+    <Folder Include="EmbeddedBlazorContentHelpers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\sportal-static-content\sportal-static-content.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 </Project>
