@@ -30,7 +30,7 @@
 
                     @foreach (string group in u.Groups)
                     {
-    <MatChip Label="@group"></MatChip>}
+<MatChip Label="@group"></MatChip>}
                 </MatChipSet>
             </div>
             @*<a class="btn-floating halfway-fab waves-effect waves-light qlik-tanzanite" target="_blank" @onclick="@(e => LoginButton(e, u))">
@@ -90,7 +90,7 @@
     private async Task LoginButton(MouseEventArgs e, User u)
     {
         // get JWT token
-        LoginObject lo = await JWTServiceInstance.GetLoginObject(u);
+        LoginObject lo = await JWTServiceInstance.GetLoginObjectAsync(u);
 
         // make call to login
         await JSRuntime.InvokeAsync<string>("blazorExtensions.JWTLogin", lo.Hostname, lo.WebIntegrationID, lo.JWTToken);
