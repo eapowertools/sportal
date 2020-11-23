@@ -121,7 +121,6 @@ namespace sportal.Services
 
 			var token = tokenHandler.CreateToken(tokenDescriptor);
 			string jwtToken = tokenHandler.WriteToken(token);
-			Console.WriteLine(jwtToken);
 			return jwtToken;
 		}
 
