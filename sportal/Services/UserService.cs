@@ -114,6 +114,5 @@ namespace sportal.Services
 		{
 			return Task.FromResult(_users.ToArray());
 		}
-
 	}
 }
