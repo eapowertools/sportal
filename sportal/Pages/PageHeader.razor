@@ -2,19 +2,17 @@
 @inject UserService UserServiceInstance
 
 
-<div class="section no-pad-bot" id="header">
-    <div class="container">
-        <MatHeadline3 class="textCenter qlik-green-text">Sportal</MatHeadline3>
-        <MatHeadline5 class="textCenter">An impersonation portal for Qlik Sense Enterprise in the cloud</MatHeadline5>
-        <br>
-
-    </div>
+<div id="titleHeader">
+    <MatHeadline3 class="textCenter qlik-green-text">Sportal</MatHeadline3>
+</div>
+<div id="captionHeader">
+    <MatHeadline6 class="textCenter">An impersonation portal for Qlik Sense® Enterprise SaaS</MatHeadline6>
 </div>
 
 <div id="groupContainer" class="qlik-tanzanite">
 
-    <MatHeadline6 class="textCenter qlik-white">Groups</MatHeadline6>
-    <MatChipSet class="textCenter" Filter="true" @bind-SelectedChips="selectedChips">
+    <MatSubtitle2 id="groupHeader" class="textCenter white-text">Groups</MatSubtitle2>
+    <MatChipSet class="" Filter="true" @bind-SelectedChips="selectedChips">
 
         @foreach (string group in chipGroups)
         {
