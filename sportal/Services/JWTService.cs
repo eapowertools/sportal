@@ -20,14 +20,10 @@ namespace sportal.Services
 	{
 		private TenantData _tenantData;
 
-		private UserService _userService;
-
 		private X509Certificate2 _certificate;
 
 		public JWTService(UserService userService)
 		{
-			_userService = userService;
-
 			//try to load tenant data file
 			if (File.Exists("tenantData.tdf"))
 			{

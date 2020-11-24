@@ -1,9 +1,20 @@
 ﻿@inherits LayoutComponentBase
+<MatThemeProvider Theme="@theme1">
 
-<PageHeader />
+    <div id="mainLayoutMaxWidth" class="center">
+        <PageHeader />
 
-<SettingsDialog />
+        <UserTiles />
 
-<UserTiles />
+        <PageFooter />
+    </div>
+    <SettingsDialog />
+</MatThemeProvider>
 
-<PageFooter />
+@code
+        { MatTheme theme1 = new MatTheme()
+    {
+        Primary = "#244b5a",
+        Secondary = "#870064",
+
+    }; }

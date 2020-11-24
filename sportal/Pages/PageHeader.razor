@@ -1,6 +1,10 @@
-﻿<div class="section no-pad-bot" id="index-banner">
+﻿@using sportal.Services
+@inject UserService UserServiceInstance
+
+
+<div class="section no-pad-bot" id="header">
     <div class="container">
-        <h1 class="header center qlik-green-text">Qlik SaaS Personas</h1>
+        <MatHeadline3 class="header center qlik-green-text">Qlik SaaS Personas</MatHeadline3>
         <div class="row center">
             <h5 class="header col s12 qlik-tanzanite-text">
                 Let's manage an enterprise Qlik Sense deployment hosted in the
@@ -18,9 +22,9 @@
             <MatHeadline6>AD Groups</MatHeadline6>
             <MatChipSet Filter="true" @bind-SelectedChips="selectedChips">
 
-                @foreach (string group in groups)
+                @foreach (string group in chipGroups)
                 {
-                    <MatChip Label="@group"></MatChip>}
+<MatChip Label="@group"></MatChip>}
             </MatChipSet>
 
 
@@ -28,5 +32,10 @@
     </MatCard>
 </div>
 
-@code{ string[] groups = { "Executive", "North", "South", "Sales", "Supply Chain", "Marketing", "Qlik Developer", "IT", "External" };
-    MatChip[] selectedChips = null; }
+@code{ string[] chipGroups;
+    MatChip[] selectedChips = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        chipGroups = await UserServiceInstance.GetChipGroupsAsync();
+    } }
