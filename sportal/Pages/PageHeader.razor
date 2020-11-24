@@ -1,32 +1,29 @@
-﻿<div class="section no-pad-bot" id="index-banner">
-    <div class="container">
-        <h1 class="header center qlik-green-text">Qlik SaaS Personas</h1>
-        <div class="row center">
-            <h5 class="header col s12 qlik-tanzanite-text">
-                Let's manage an enterprise Qlik Sense deployment hosted in the
-                Qlik Cloud!
-            </h5>
-        </div>
-        <br>
+﻿@using sportal.Services
+@inject UserService UserServiceInstance
 
-    </div>
+
+<div id="titleHeader">
+    <MatHeadline3 class="textCenter qlik-green-text">Sportal</MatHeadline3>
+</div>
+<div id="captionHeader">
+    <MatHeadline6 class="textCenter">An impersonation portal for Qlik Sense® Enterprise SaaS</MatHeadline6>
 </div>
 
-<div class="row">
-    <MatCard class="card qlik-tanzanite z-depth-4 col s2 offset-s2">
-        <MatCardContent class="card-content white-text">
-            <MatHeadline6>AD Groups</MatHeadline6>
-            <MatChipSet Filter="true" @bind-SelectedChips="selectedChips">
+<div id="groupContainer" class="qlik-tanzanite">
 
-                @foreach (string group in groups)
-                {
-                    <MatChip Label="@group"></MatChip>}
-            </MatChipSet>
+    <MatSubtitle2 id="groupHeader" class="textCenter white-text">Groups</MatSubtitle2>
+    <MatChipSet class="" Filter="true" @bind-SelectedChips="selectedChips">
 
-
-        </MatCardContent>
-    </MatCard>
+        @foreach (string group in chipGroups)
+        {
+<MatChip Label="@group"></MatChip>}
+    </MatChipSet>
 </div>
 
-@code{ string[] groups = { "Executive", "North", "South", "Sales", "Supply Chain", "Marketing", "Qlik Developer", "IT", "External" };
-    MatChip[] selectedChips = null; }
+@code{ string[] chipGroups;
+    MatChip[] selectedChips = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        chipGroups = await UserServiceInstance.GetChipGroupsAsync();
+    } }

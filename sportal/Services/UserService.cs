@@ -80,9 +80,12 @@ namespace sportal.Services
 ]";
 		private List<User> _users;
 
+		private List<string> _chipGroups;
+
 		public UserService()
 		{
 			_users = new List<User>();
+			_chipGroups = new List<string>();
 
 			string userString = "";
 			if (File.Exists("users.json"))
@@ -110,6 +113,10 @@ namespace sportal.Services
 				foreach (JToken group in groups)
 				{
 					groupList.Add(group.ToString());
+					if (!_chipGroups.Contains(group.ToString()))
+					{
+						_chipGroups.Add(group.ToString());
+					}
 				}
 
 				_users.Add(new User(sub, name, email, title, bio, image, groupList.ToArray()));
@@ -121,6 +128,11 @@ namespace sportal.Services
 		public Task<User[]> GetUserListAsync()
 		{
 			return Task.FromResult(_users.ToArray());
+		}
+
+		public Task<string[]> GetChipGroupsAsync()
+		{
+			return Task.FromResult(_chipGroups.ToArray());
 		}
 	}
 }

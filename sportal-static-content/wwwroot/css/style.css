@@ -42,6 +42,7 @@ h6 {
     margin-block-start: .33em !important;
     margin-block-end: .33em !important;
 }
+
 /* Location Formatting */
 #settingsButton {
     position: fixed;
@@ -58,15 +59,68 @@ h6 {
     color: white;
     margin: 5%;
 }
-/* Custom Compenents*/
 
-.mdc-icon-button {
+#mainLayoutMaxWidth {
+    max-width: 1300px;
+}
+
+.center {
+    margin: auto;
+    padding: 5px;
+}
+
+.textCenter {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+    text-align: center;
+}
+
+#groupContainer {
+    margin: auto;
+    width: 60%;
+    padding: 10px;
+    text-align: center;
+    border-radius: 25px;
+}
+
+#codeLinkDiv {
+    padding-top: 12px;
+}
+
+#codeLinkText {
+    line-height: 34px;
+    height: 35px;
+}
+
+/* Custom Compenents*/
+#cardBodyContent::before, #cardBodyContent::after {
+    width: 0%;
+    height: 0%;
+}
+
+#cardBodyContent {
+    cursor: default !important;
+}
+
+#loginButton {
     color: white;
     background-color: #1C355e;
     border-radius: 50%;
     text-align: center;
 }
 
+#settingsButton {
+    color: white;
+    background-color: #870064;
+    border-radius: 50%;
+}
+
 #groupsBox {
     margin: 5%;
+}
+
+#groupHeader {
+    padding-top: 0px !important;
+    margin-top: 0px !important;
 }
