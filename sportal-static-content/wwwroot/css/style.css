@@ -69,6 +69,12 @@ h6 {
     padding: 10px;
 }
 
+.textCenter {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}
+
 #codeLinkDiv {
     padding-top: 12px;
 }

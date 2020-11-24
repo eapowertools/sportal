@@ -85,6 +85,7 @@ namespace sportal.Services
 		public UserService()
 		{
 			_users = new List<User>();
+			_chipGroups = new List<string>();
 
 			string userString = "";
 			if (File.Exists("users.json"))

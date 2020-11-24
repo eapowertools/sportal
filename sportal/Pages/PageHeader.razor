@@ -4,32 +4,22 @@
 
 <div class="section no-pad-bot" id="header">
     <div class="container">
-        <MatHeadline3 class="header center qlik-green-text">Qlik SaaS Personas</MatHeadline3>
-        <div class="row center">
-            <h5 class="header col s12 qlik-tanzanite-text">
-                Let's manage an enterprise Qlik Sense deployment hosted in the
-                Qlik Cloud!
-            </h5>
-        </div>
+        <MatHeadline3 class="textCenter qlik-green-text">Sportal</MatHeadline3>
+        <MatHeadline5 class="textCenter">An impersonation portal for Qlik Sense Enterprise in the cloud</MatHeadline5>
         <br>
 
     </div>
 </div>
 
-<div class="row">
-    <MatCard class="card qlik-tanzanite z-depth-4 col s2 offset-s2">
-        <MatCardContent class="card-content white-text">
-            <MatHeadline6>AD Groups</MatHeadline6>
-            <MatChipSet Filter="true" @bind-SelectedChips="selectedChips">
+<div id="groupContainer" class="qlik-tanzanite">
 
-                @foreach (string group in chipGroups)
-                {
+    <MatHeadline6 class="textCenter qlik-white">Groups</MatHeadline6>
+    <MatChipSet class="textCenter" Filter="true" @bind-SelectedChips="selectedChips">
+
+        @foreach (string group in chipGroups)
+        {
 <MatChip Label="@group"></MatChip>}
-            </MatChipSet>
-
-
-        </MatCardContent>
-    </MatCard>
+    </MatChipSet>
 </div>
 
 @code{ string[] chipGroups;
