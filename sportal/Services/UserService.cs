@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -109,15 +111,6 @@ namespace sportal.Services
 				string image = "";
 				IEnumerable<JToken> groups;
 
-				if (userObject.ContainsKey("subject"))
-				{
-					sub = userObject["subject"].ToString();
-				}
-				else
-				{
-					sub = "sportal-" + Guid.NewGuid();
-				}
-
 				if (userObject.ContainsKey("name"))
 				{
 					name = userObject["name"].ToString();
@@ -127,13 +120,22 @@ namespace sportal.Services
 					throw new Exception("Trying to load users.json file. 'name' field missing.");
 				}
 
+				if (userObject.ContainsKey("subject"))
+				{
+					sub = userObject["subject"].ToString();
+				}
+				else
+				{
+					sub = "sportal-" + name.Replace(" ", string.Empty);
+				}
+
 				if (userObject.ContainsKey("email"))
 				{
 					email = userObject["email"].ToString();
 				}
 				else
 				{
-					throw new Exception("Trying to load users.json file. 'email' field missing.");
+					email = name.Replace(" ", string.Empty) + "@sportal.dev";
 				}
 
 				if (userObject.ContainsKey("title"))
@@ -153,7 +155,7 @@ namespace sportal.Services
 				if (userObject.ContainsKey("image"))
 				{
 					image = userObject["image"].ToString();
-					if (image.EndsWith(".png") | image.EndsWith(".jpg") | image.EndsWith(".jpeg") | image.EndsWith(".bmp"))
+					if (image.EndsWith(".png") | image.EndsWith(".jpg") | image.EndsWith(".jpeg") | image.EndsWith(".bmp") | image.EndsWith(".tiff"))
 					{
 						image = GetBase64PNG(image);
 					}
@@ -198,7 +200,32 @@ namespace sportal.Services
 
 		private string GetBase64PNG(string path)
 		{
-			return "";
+			string base64Png = "";
+
+			Bitmap b = (Bitmap)Bitmap.FromFile(path);
+			float newWidth;
+			float newHeight;
+			if (b.Width > b.Height)
+			{
+				newWidth = 132;
+				newHeight = (b.Height * 132) / b.Width;
+			}
+			else
+			{
+				newHeight = 132;
+				newWidth = (b.Width * 132) / b.Height;
+
+			}
+
+			b = new Bitmap(b, new Size((int)newWidth, (int)newHeight));
+
+			using (MemoryStream ms = new MemoryStream())
+			{
+				b.Save(ms, ImageFormat.Png);
+				byte[] imageBytes = ms.ToArray();
+				base64Png = Convert.ToBase64String(imageBytes);
+			}
+			return base64Png;
 		}
 	}
 }
