@@ -51,11 +51,18 @@
 
     private async Task LoginButton(MouseEventArgs e, User u)
     {
-        // get JWT token
-        LoginObject lo = await JWTServiceInstance.GetLoginObjectAsync(u);
+        try
+        {
+            // get JWT token
+            LoginObject lo = await JWTServiceInstance.GetLoginObjectAsync(u);
 
-        // make call to login
-        await JSRuntime.InvokeAsync<string>("blazorExtensions.JWTLogin", lo.Hostname, lo.WebIntegrationID, lo.JWTToken);
+            // make call to login
+            await JSRuntime.InvokeAsync<string>("blazorExtensions.JWTLogin", lo.Hostname, lo.WebIntegrationID, lo.JWTToken);
+        }
+        catch
+        {
+            Console.WriteLine("Login failed. Please validate that Sportal has been configured correctly.");
+        }
     }}
 
 
