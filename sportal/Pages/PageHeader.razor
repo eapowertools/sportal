@@ -11,17 +11,16 @@
 
 <div id="groupContainer" class="qlik-tanzanite">
 
-    <MatSubtitle2 id="groupHeader" class="textCenter white-text">Groups</MatSubtitle2>
-    <MatChipSet class="" Filter="true" @bind-SelectedChips="selectedChips">
+    <MatHeadline6 id="groupHeader" class="textCenter white-text">Groups</MatHeadline6>
+    <div class="parentChipGroup">
 
         @foreach (string group in chipGroups)
         {
-<MatChip Label="@group"></MatChip>}
-    </MatChipSet>
+<span class="groupChip">@group</span>}
+    </div>
 </div>
 
 @code{ string[] chipGroups;
-    MatChip[] selectedChips = null;
 
     protected override async Task OnInitializedAsync()
     {

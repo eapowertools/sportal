@@ -23,13 +23,12 @@
                 <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">@u.Biography</MatBody2>
                 <br>
 
-
-                <MatChipSet Filter="true" @bind-SelectedChips="selectedChips">
+                <div class="parentChipGroup">
 
                     @foreach (string group in u.Groups)
                     {
-<MatChip Label="@group"></MatChip>}
-                </MatChipSet>
+<span class="groupChip">@group</span>}
+                </div>
             </div>
         </div>
     </MatCardContent>
@@ -44,7 +43,6 @@
 </div>
 
 @code { private User[] _users;
-    MatChip[] selectedChips = null;
 
     protected override async Task OnInitializedAsync()
     {
