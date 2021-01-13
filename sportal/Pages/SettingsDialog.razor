@@ -3,6 +3,7 @@
 
 @inject IJSRuntime JSRuntime;
 @inject JWTService JWTServiceInstance
+@inject IMatToaster Toaster
 
 <MatDialog Id="settingsDialog" @bind-IsOpen="@DialogIsOpen">
     <MatDialogTitle>QCS Tenant Settings</MatDialogTitle>
@@ -91,7 +92,11 @@
 
     private async Task CopyToClipboard()
     {
-        await JSRuntime.InvokeAsync<string>("blazorExtensions.CopyToClipboard");
+        bool didCopy = await JSRuntime.InvokeAsync<bool>("blazorExtensions.CopyToClipboard");
+        if (!didCopy)
+        {
+            Toaster.Add("'Copy to Clipboard' failed. This is unsupported in Safari. Use another browser or manually copy the text.", MatToastType.Danger);
+        }
     }
 }
 

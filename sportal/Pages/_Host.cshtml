@@ -46,7 +46,8 @@
                 copyText.setSelectionRange(0, 99999); /*For mobile devices*/
 
                 /* Copy the text inside the text field */
-                document.execCommand("copy");
+                var success = document.execCommand("copy");
+                return success;
             }
         }</script>
 </body>
