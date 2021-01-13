@@ -143,3 +143,7 @@ h6 {
     font-family: var(--mdc-typography-body2-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));
     font-size: 13px;
 }
+
+.mat-toast {
+    font-family: var(--mdc-typography-body2-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));
+}

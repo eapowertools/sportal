@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MatBlazor;
 using sportal.EmbeddedBlazorContentHelpers;
 using sportal.Services;
 
@@ -31,6 +32,16 @@ namespace sportal
 			services.AddServerSideBlazor();
 			services.AddSingleton<UserService>();
 			services.AddSingleton<JWTService>();
+
+			services.AddMatToaster(config =>
+			{
+				config.Position = MatToastPosition.TopRight;
+				config.PreventDuplicates = false;
+				config.NewestOnTop = true;
+				config.ShowCloseButton = false;
+				config.MaximumOpacity = 95;
+				config.VisibleStateDuration = 5000;
+			});
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
