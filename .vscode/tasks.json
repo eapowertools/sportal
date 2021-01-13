@@ -26,6 +26,13 @@
             "command": "",
             "type": "shell",
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish-osx-self-contained",
+            "args": ["dotnet", "publish", "-r", "osx-x64", "-p:PublishSingleFile=True", "-p:PublishTrimmed=false", "--self-contained", "true", "--configuration", "Release"],
+            "command": "",
+            "type": "shell",
+            "problemMatcher": "$msCompile"
         }
     ]
 }
