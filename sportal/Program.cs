@@ -1,23 +1,43 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace sportal
 {
+	internal class GlobalSettings
+	{
+		internal static bool HIDE_SETTINGS = false;
+
+		internal static int DEFAULT_PORT = 8080;
+	}
+
 	public class Program
 	{
-		private static int DEFAULT_PORT = 8080;
-
 		public static void Main(string[] args)
 		{
-			int portNumber = DEFAULT_PORT;
+			int portNumber = GlobalSettings.DEFAULT_PORT;
+			for (int i = 0; i < args.Length; i++)
+			{
+				if (args[i] == "--port" || args[i] == "-p")
+				{
+					i = i + 1;
+					if (Int32.TryParse(args[i], out portNumber))
+					{
+						Console.WriteLine("Custom port used: " + args[i]);
+					}
+					else
+					{
+						Console.WriteLine("Failed to parse port number: " + args[i] + ". Will quit.");
+						return;
+					}
+				}
+				else if (args[i] == "--hidesettings")
+				{
+					GlobalSettings.HIDE_SETTINGS = true;
+				}
+			}
+
+
 			if (args.Length == 2)
 			{
 				if (args[0] == "--port" || args[0] == "-p")

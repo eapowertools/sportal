@@ -8,7 +8,9 @@
 
         <PageFooter />
     </div>
-    <SettingsDialog />
+    @if (!GlobalSettings.HIDE_SETTINGS)
+    {
+<SettingsDialog />}
 </MatThemeProvider>
 
 @code
