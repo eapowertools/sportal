@@ -16,9 +16,11 @@ namespace sportal.Data
 
 		public string Image { get; private set; }
 
+		public string ImageURL { get; private set; }
+
 		public string[] Groups { get; private set; }
 
-		public User(string subject, string displayName, string email, string title, string biography, string image, string[] groups)
+		public User(string subject, string displayName, string email, string title, string biography, string image, string imageURL, string[] groups)
 		{
 			this.Subject = subject;
 			this.DisplayName = displayName;
@@ -26,7 +28,17 @@ namespace sportal.Data
 			this.Title = title;
 			this.Biography = biography;
 			this.Image = image;
+			this.ImageURL = imageURL;
 			this.Groups = groups;
+		}
+
+		public bool HasImageURL()
+		{ 
+			if (string.IsNullOrEmpty(ImageURL))
+			{
+				return false;
+			}
+			return true;
 		}
 	}
 }

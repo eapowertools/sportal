@@ -110,6 +110,10 @@ namespace sportal.Services
 				Audience = "qlik.api/login/jwt-session",
 				SigningCredentials = signingCredentials
 			};
+			if (user.HasImageURL())
+			{
+				tokenDescriptor.Subject.AddClaim(new Claim("picture", user.ImageURL));
+			}
 			for (int i = 0; i < user.Groups.Length; i++)
 			{
 				tokenDescriptor.Subject.AddClaim(new Claim("groups", user.Groups[i]));

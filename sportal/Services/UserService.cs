@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
@@ -109,6 +110,7 @@ namespace sportal.Services
 				string title = "";
 				string bio = "";
 				string image = "";
+				string imageURL = "";
 				IEnumerable<JToken> groups;
 
 				if (userObject.ContainsKey("name"))
@@ -156,8 +158,13 @@ namespace sportal.Services
 				if (userObject.ContainsKey("image"))
 				{
 					image = userObject["image"].ToString();
+					
 					if (image.EndsWith(".png") | image.EndsWith(".jpg") | image.EndsWith(".jpeg") | image.EndsWith(".bmp") | image.EndsWith(".tiff"))
 					{
+						if (image.StartsWith("http"))
+						{
+							imageURL = image;
+						}
 						image = GetBase64PNG(image);
 						if (string.IsNullOrEmpty(image))
 						{
@@ -193,7 +200,7 @@ namespace sportal.Services
 					}
 				}
 
-				_users.Add(new User(sub, name, email, title, bio, image, groupList.ToArray()));
+				_users.Add(new User(sub, name, email, title, bio, image, imageURL, groupList.ToArray()));
 			}
 		}
 
@@ -210,14 +217,24 @@ namespace sportal.Services
 		private string GetBase64PNG(string path)
 		{
 			string base64Png = "";
+			Bitmap b;
 
-			if (!File.Exists(path))
+			if (path.StartsWith("http"))
 			{
-				Console.WriteLine("Image not found at '" + path + "', using default image instead.");
-				return "";
+				WebClient client = new WebClient();
+				Stream stream = client.OpenRead(path);
+				b = new Bitmap(stream);
 			}
+			else
+			{
+				if (!File.Exists(path))
+				{
+					Console.WriteLine("Image not found at '" + path + "', using default image instead.");
+					return "";
+				}
 
-			Bitmap b = (Bitmap)Bitmap.FromFile(path);
+				b = (Bitmap)Bitmap.FromFile(path);
+			}
 			float newWidth;
 			float newHeight;
 			if (b.Width > b.Height)
