@@ -90,6 +90,11 @@ namespace sportal.Services
 			_users = new List<User>();
 			_chipGroups = new List<string>();
 
+			GenerateUsers();
+		}
+
+		public void GenerateUsers()
+		{
 			string userString = "";
 			if (File.Exists("users.json"))
 			{
@@ -158,7 +163,7 @@ namespace sportal.Services
 				if (userObject.ContainsKey("image"))
 				{
 					image = userObject["image"].ToString();
-					
+
 					if (image.EndsWith(".png") | image.EndsWith(".jpg") | image.EndsWith(".jpeg") | image.EndsWith(".bmp") | image.EndsWith(".tiff"))
 					{
 						if (image.StartsWith("http"))
