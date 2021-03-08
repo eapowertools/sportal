@@ -3,6 +3,7 @@
 
 @inject IJSRuntime JSRuntime;
 @inject JWTService JWTServiceInstance
+@inject UserService UserServiceInstance
 @inject IMatToaster Toaster
 
 <MatDialog Id="settingsDialog" @bind-IsOpen="@DialogIsOpen">
@@ -30,6 +31,7 @@
 
     </MatDialogContent>
     <MatDialogActions>
+        <MatButton Id="refreshUsersButton" OnClick="@RefreshUsers">Refresh Users</MatButton>
         <MatButton OnClick="@(e => { dialogIsOpen = false; })">Cancel</MatButton>
         <MatButton OnClick="@SaveClick">Save</MatButton>
     </MatDialogActions>
@@ -75,12 +77,12 @@
         jwtKeyID = tenantData.KeyID;
     }
 
-    void OpenDialog()
+    private void OpenDialog()
     {
         dialogIsOpen = true;
     }
 
-    void SaveClick()
+    private void SaveClick()
     {
         tenantData.Hostname = hostname;
         tenantData.WebIntegrationID = webIntegrationID;
@@ -88,6 +90,13 @@
         tenantData.KeyID = jwtKeyID;
         dialogIsOpen = false;
         JWTServiceInstance.SaveUpdatedTenantData(hostname, webIntegrationID, jwtIssuer, jwtKeyID);
+    }
+
+    private async void RefreshUsers()
+    {
+        UserServiceInstance.RefreshUsers();
+
+        await JSRuntime.InvokeAsync<string>("blazorExtensions.Refresh");
     }
 
     private async Task CopyToClipboard()

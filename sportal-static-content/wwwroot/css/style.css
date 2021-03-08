@@ -147,3 +147,7 @@ h6 {
 .mat-toast {
     font-family: var(--mdc-typography-body2-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));
 }
+
+#refreshUsersButton {
+    margin-right: auto !important;
+}

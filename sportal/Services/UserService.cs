@@ -219,6 +219,14 @@ namespace sportal.Services
 			return Task.FromResult(_chipGroups.ToArray());
 		}
 
+		public void RefreshUsers()
+		{
+			_users.Clear();
+			_chipGroups.Clear();
+
+			GenerateUsers();
+		}
+
 		private string GetBase64PNG(string path)
 		{
 			string base64Png = "";
