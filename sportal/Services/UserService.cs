@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -96,9 +97,10 @@ namespace sportal.Services
 		public void GenerateUsers()
 		{
 			string userString = "";
-			if (File.Exists("users.json"))
+			Console.WriteLine("Looking for 'users.json' file in: " + SportalFolder.WorkingDirectory);
+			if (File.Exists(Path.Combine(SportalFolder.WorkingDirectory, "users.json")))
 			{
-				userString = File.ReadAllText("users.json");
+				userString = File.ReadAllText(Path.Combine(SportalFolder.WorkingDirectory, "users.json"));
 
 			}
 			else
