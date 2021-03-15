@@ -24,10 +24,11 @@ namespace sportal.Services
 
 		public JWTService(UserService userService)
 		{
+			Console.WriteLine("Looking for 'tenantData.tdf' file in: " + SportalFolder.WorkingDirectory);
 			//try to load tenant data file
-			if (File.Exists("tenantData.tdf"))
+			if (File.Exists(Path.Combine(SportalFolder.WorkingDirectory, "tenantData.tdf")))
 			{
-				Stream openFileStream = File.OpenRead("tenantData.tdf");
+				Stream openFileStream = File.OpenRead(Path.Combine(SportalFolder.WorkingDirectory, "tenantData.tdf"));
 				BinaryFormatter deserializer = new BinaryFormatter();
 				_tenantData = (TenantData)deserializer.Deserialize(openFileStream);
 				openFileStream.Close();
@@ -47,7 +48,7 @@ namespace sportal.Services
 
 		private void SaveTenantData()
 		{
-			Stream SaveFileStream = File.Create("tenantData.tdf");
+			Stream SaveFileStream = File.Create(Path.Combine(SportalFolder.WorkingDirectory, "tenantData.tdf"));
 			BinaryFormatter serializer = new BinaryFormatter();
 			serializer.Serialize(SaveFileStream, _tenantData);
 			SaveFileStream.Close();
