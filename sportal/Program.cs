@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Hosting;
 
+using sportal.EmbeddedBlazorContentHelpers;
+
 namespace sportal
 {
 	internal class GlobalSettings
@@ -44,8 +46,8 @@ namespace sportal
 					}
 					else
 					{
-						Console.WriteLine("Failed to parse port number: " + args[i] + ". Will quit.");
-						return;
+						Console.WriteLine("Failed to parse port number: " + args[i] + ".");
+						throw new Exception("Exiting...");
 					}
 				}
 				else if (args[i] == "--certificate" || args[i] == "-c")
@@ -55,8 +57,8 @@ namespace sportal
 					GlobalSettings.CERTIFICATE_PATH = args[i];
 					if (!File.Exists(GlobalSettings.CERTIFICATE_PATH))
 					{
-						Console.WriteLine("Certificate file does not exist, or Sportal does not have access to it.\nLocation: '" + GlobalSettings.CERTIFICATE_PATH + "'\nExiting...");
-						return;
+						Console.WriteLine("Certificate file does not exist, or Sportal does not have access to it.\nLocation: '" + GlobalSettings.CERTIFICATE_PATH + "'");
+						throw new Exception("Exiting...");
 					}
 
 					i++;
@@ -73,7 +75,9 @@ namespace sportal
 				}
 				else
 				{
-					Console.WriteLine("Invalid argument: '" + args[i] + "'\nExiting...");
+					Console.WriteLine("Invalid argument: '" + args[i] + "'");
+					throw new Exception("Exiting...");
+
 				}
 			}
 			if (!newPort)
@@ -85,13 +89,14 @@ namespace sportal
 			}
 
 			CreateHostBuilder(args).Build().Run();
-
 		}
 
-		public static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>
+		public static IHostBuilder CreateHostBuilder(string[] args) =>
+			Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>
 				{
 					webBuilder.UseStartup<Startup>().UseKestrel(options => options.ConfigureServer());
-				});
+				}
+			);
 	}
 
 	public static class KestrelServerOptionsExtensions
@@ -157,7 +162,19 @@ namespace sportal
 			//}
 			//throw new InvalidOperationException("No valid certificate configuration found for the current endpoint.");
 
-			return new X509Certificate2(GlobalSettings.CERTIFICATE_PATH, GlobalSettings.CERTIFICATE_PASSWORD);
+			X509Certificate2 cert = null;
+			try
+			{
+				cert = new X509Certificate2(GlobalSettings.CERTIFICATE_PATH, GlobalSettings.CERTIFICATE_PASSWORD);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("Failed to load certificate from: '" + GlobalSettings.CERTIFICATE_PATH + "'");
+				Console.WriteLine("Exception: " + e.Message);
+
+				throw new SportalException("Exiting...");
+			}
+			return cert;
 		}
 	}
 }
