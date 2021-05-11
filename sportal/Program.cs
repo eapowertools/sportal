@@ -108,17 +108,17 @@ namespace sportal
 			var ipAddresses = new List<IPAddress>();
 			if (host == "localhost")
 			{
-				ipAddresses.Add(IPAddress.IPv6Loopback);
-				ipAddresses.Add(IPAddress.Loopback);
+				ipAddresses.Add(IPAddress.Any);
+				ipAddresses.Add(IPAddress.IPv6Any);
 			}
 			else if (IPAddress.TryParse(host, out var address))
 			{
 				ipAddresses.Add(address);
 			}
-			else
-			{
-				ipAddresses.Add(IPAddress.IPv6Any);
-			}
+			//else
+			//{
+			//	ipAddresses.Add(IPAddress.IPv6Any);
+			//}
 
 			foreach (var address in ipAddresses)
 			{
