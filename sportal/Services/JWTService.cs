@@ -100,6 +100,7 @@ namespace sportal.Services
 			{
 				Subject = new ClaimsIdentity(new Claim[]
 				{
+					new Claim("jti", Guid.NewGuid().ToString()),
 					new Claim("sub", user.Subject),
 					new Claim("subType", "user"),
 					new Claim("name", user.DisplayName),
@@ -109,6 +110,7 @@ namespace sportal.Services
 				Expires = DateTime.UtcNow.AddHours(3),
 				Issuer = _tenantData.Issuer,
 				Audience = "qlik.api/login/jwt-session",
+				NotBefore = DateTime.UtcNow,
 				SigningCredentials = signingCredentials
 			};
 			if (user.HasImageURL())
