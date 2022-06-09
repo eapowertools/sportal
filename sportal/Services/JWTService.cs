@@ -1,15 +1,10 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Security;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 using sportal.Data;
