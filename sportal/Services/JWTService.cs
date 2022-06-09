@@ -107,10 +107,10 @@ namespace sportal.Services
 					new Claim("email", user.Email),
 					new Claim("email_verified", "true", ClaimValueTypes.Boolean)
 				}),
-				Expires = DateTime.UtcNow.AddHours(3),
+				Expires = DateTime.Now.AddMinutes(3),
 				Issuer = _tenantData.Issuer,
 				Audience = "qlik.api/login/jwt-session",
-				NotBefore = DateTime.UtcNow,
+				NotBefore = DateTime.Now.AddMinutes(-3),
 				SigningCredentials = signingCredentials
 			};
 			if (user.HasImageURL())
