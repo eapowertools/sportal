@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using SixLabors.ImageSharp;
@@ -235,8 +235,11 @@ namespace sportal.Services
 
 			if (path.StartsWith("http"))
 			{
-				WebClient client = new WebClient();
-				Stream stream = client.OpenRead(path);
+				var httpClientHandler = new HttpClientHandler();
+				// Return `true` to allow certificates that are untrusted/invalid
+				httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+				var httpClient = new HttpClient(httpClientHandler);
+				Stream stream = httpClient.GetStreamAsync(path).Result;
 				i = Image.Load(stream, out imageFormat);
 			}
 			else

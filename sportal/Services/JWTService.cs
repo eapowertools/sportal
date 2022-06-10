@@ -1,15 +1,10 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Security;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 using sportal.Data;
@@ -100,15 +95,17 @@ namespace sportal.Services
 			{
 				Subject = new ClaimsIdentity(new Claim[]
 				{
+					new Claim("jti", Guid.NewGuid().ToString()),
 					new Claim("sub", user.Subject),
 					new Claim("subType", "user"),
 					new Claim("name", user.DisplayName),
 					new Claim("email", user.Email),
 					new Claim("email_verified", "true", ClaimValueTypes.Boolean)
 				}),
-				Expires = DateTime.UtcNow.AddHours(3),
+				Expires = DateTime.Now.AddMinutes(3),
 				Issuer = _tenantData.Issuer,
 				Audience = "qlik.api/login/jwt-session",
+				NotBefore = DateTime.Now.AddMinutes(-3),
 				SigningCredentials = signingCredentials
 			};
 			if (user.HasImageURL())
