@@ -37,7 +37,6 @@
         }
         <MatButton Id="refreshUsersButton" OnClick="@RefreshUsers">Refresh Users</MatButton>
 
-
         <MatButton OnClick="@(e => { dialogIsOpen = false; })">Cancel</MatButton>
         <MatButton OnClick="@SaveClick">Save</MatButton>
     </MatDialogActions>
@@ -108,7 +107,7 @@
     private async Task DownloadCertificate()
     {
         var fileStream = JWTServiceInstance.GetCertificateFilestream();
-        var fileName = "certificate.pfx";
+        var fileName = "sportalCertificate.pfx";
 
         using var streamRef = new DotNetStreamReference(stream: fileStream);
 
