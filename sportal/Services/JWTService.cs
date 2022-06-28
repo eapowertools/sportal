@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 using sportal.Data;
@@ -24,10 +25,9 @@ namespace sportal.Services
 			if (File.Exists(Path.Combine(SportalFolder.WorkingDirectory, "tenantData.tdf")))
 			{
 				Stream openFileStream = File.OpenRead(Path.Combine(SportalFolder.WorkingDirectory, "tenantData.tdf"));
-				BinaryFormatter deserializer = new BinaryFormatter();
-				_tenantData = (TenantData)deserializer.Deserialize(openFileStream);
+				_tenantData = (TenantData)JsonSerializer.Deserialize(openFileStream, typeof(TenantData));
 				openFileStream.Close();
-				_certificate = new X509Certificate2(_tenantData.Certificate);
+				_certificate = new X509Certificate2(_tenantData.Certificate, (string)null, X509KeyStorageFlags.Exportable);
 			}
 			else
 			{
@@ -44,8 +44,7 @@ namespace sportal.Services
 		private void SaveTenantData()
 		{
 			Stream SaveFileStream = File.Create(Path.Combine(SportalFolder.WorkingDirectory, "tenantData.tdf"));
-			BinaryFormatter serializer = new BinaryFormatter();
-			serializer.Serialize(SaveFileStream, _tenantData);
+			JsonSerializer.Serialize(SaveFileStream, _tenantData);
 			SaveFileStream.Close();
 		}
 
@@ -154,6 +153,13 @@ namespace sportal.Services
 			saveTenantDataTask.Start();
 
 			return;
+		}
+
+		public Stream GetCertificateFilestream()
+		{
+			byte[] certificateByteArray = _certificate.Export(X509ContentType.Pfx);
+			var fileStream = new MemoryStream(certificateByteArray);
+			return fileStream;
 		}
 	}
 }

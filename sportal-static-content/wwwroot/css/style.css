@@ -148,6 +148,10 @@ h6 {
     font-family: var(--mdc-typography-body2-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));
 }
 
+#exportCertificateButton {
+    margin-right: 0px !important;
+}
+
 #refreshUsersButton {
     margin-right: auto !important;
 }
