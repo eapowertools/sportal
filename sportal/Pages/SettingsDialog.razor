@@ -1,7 +1,7 @@
 ﻿@using sportal.Data
 @using sportal.Services
 
-@inject IJSRuntime JSRuntime;
+@inject IJSRuntime JSRuntime
 @inject JWTService JWTServiceInstance
 @inject UserService UserServiceInstance
 @inject IMatToaster Toaster
@@ -31,7 +31,12 @@
 
     </MatDialogContent>
     <MatDialogActions>
+        @if (GlobalSettings.ENABLE_CERTIFICATE_EXPORT)
+        {
+            <MatButton Id="exportCertificateButton" @onclick="DownloadCertificate">Export Certificate</MatButton>
+        }
         <MatButton Id="refreshUsersButton" OnClick="@RefreshUsers">Refresh Users</MatButton>
+
         <MatButton OnClick="@(e => { dialogIsOpen = false; })">Cancel</MatButton>
         <MatButton OnClick="@SaveClick">Save</MatButton>
     </MatDialogActions>
@@ -97,6 +102,16 @@
         UserServiceInstance.RefreshUsers();
 
         await JSRuntime.InvokeAsync<string>("blazorExtensions.Refresh");
+    }
+
+    private async Task DownloadCertificate()
+    {
+        var fileStream = JWTServiceInstance.GetCertificateFilestream();
+        var fileName = "sportalCertificate.pfx";
+
+        using var streamRef = new DotNetStreamReference(stream: fileStream);
+
+        await JSRuntime.InvokeVoidAsync("blazorExtensions.DownloadFileFromStream", fileName, streamRef);
     }
 
     private async Task CopyToClipboard()

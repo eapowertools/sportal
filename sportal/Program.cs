@@ -25,6 +25,8 @@ namespace sportal
 		internal static string CERTIFICATE_PATH = "";
 
 		internal static SecureString CERTIFICATE_PASSWORD = null;
+
+		internal static bool ENABLE_CERTIFICATE_EXPORT = false;
 	}
 
 	public class Program
@@ -35,6 +37,7 @@ namespace sportal
 			bool newPort = false;
 			for (int i = 0; i < args.Length; i++)
 			{
+				args[i] = args[i].ToLower();
 				if (args[i] == "--port" || args[i] == "-p")
 				{
 					newPort = true;
@@ -72,6 +75,10 @@ namespace sportal
 				else if (args[i] == "--hidesettings")
 				{
 					GlobalSettings.HIDE_SETTINGS = true;
+				}
+				else if (args[i] == "--enablecertificateexport")
+				{
+					GlobalSettings.ENABLE_CERTIFICATE_EXPORT = true;
 				}
 				else
 				{
