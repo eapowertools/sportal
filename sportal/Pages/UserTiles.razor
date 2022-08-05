@@ -13,32 +13,32 @@
         @foreach (User u in _users)
         {
 
-<MatCard Id="userMatCard" class="qlik-green mat-layout-grid-cell mat-layout-grid-cell-span-3-desktop mat-layout-grid-cell-span-4-tablet mat-layout-grid-cell-span-4-phone">
-    <MatCardContent id="cardBodyContent">
-        <div class="demo-mat-card-content">
-            <MatHeadline6 class="demo-mat-card-clean-margin">@u.DisplayName</MatHeadline6>
-            <MatSubtitle2 class="demo-mat-card-clean-margin">@u.Title</MatSubtitle2>
-            <img src="@u.Image" alt="" class="circle responsive-img-custom valign">
-            <div>
-                <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">@u.Biography</MatBody2>
-                <br>
+            <MatCard Id="userMatCard" class="qlik-green mat-layout-grid-cell mat-layout-grid-cell-span-3-desktop mat-layout-grid-cell-span-4-tablet mat-layout-grid-cell-span-4-phone">
+                <MatCardContent id="cardBodyContent">
+                    <div class="demo-mat-card-content">
+                        <MatHeadline6 class="demo-mat-card-clean-margin display-name">@u.DisplayName</MatHeadline6>
+                        <MatSubtitle2 class="demo-mat-card-clean-margin">@u.Title</MatSubtitle2>
+                        <img src="@u.Image" alt="" class="circle responsive-img-custom valign">
+                        <div>
+                            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">@u.Biography</MatBody2>
+                            <br>
 
-                <div class="parentChipGroup">
+                            <div class="parentChipGroup">
 
-                    @foreach (string group in u.Groups)
-                    {
-<span class="groupChip">@group</span>}
-                </div>
-            </div>
-        </div>
-    </MatCardContent>
-    <MatCardActions>
+                                @foreach (string group in u.Groups)
+                                {
+                                    <span class="groupChip">@group</span>}
+                            </div>
+                        </div>
+                    </div>
+                </MatCardContent>
+                <MatCardActions>
 
-        <MatCardActionIcons>
-            <MatIconButton Id="loginButton" Icon="@MatIconNames.Arrow_forward" OnClick="@(e => LoginButton(e, u))"></MatIconButton>
-        </MatCardActionIcons>
-    </MatCardActions>
-</MatCard>  }
+                    <MatCardActionIcons>
+                        <MatIconButton Id="loginButton" Icon="@MatIconNames.Arrow_forward" OnClick="@(e => LoginButton(e, u))"></MatIconButton>
+                    </MatCardActionIcons>
+                </MatCardActions>
+            </MatCard>  }
     </div>
 </div>
 
