@@ -1,13 +1,37 @@
 /* Custom Stylesheet */
-/**
- * Use this file to override Materialize files so you can update
- * the core Materialize files in the future
- *
- * Made By MaterializeCSS.com
- */
+@font-face {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 400;
+    src: local(''), url('../fonts/source-sans-pro-v21-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('../fonts/source-sans-pro-v21-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
 
 
 /* Custom Colors */
+
+.mdc-typography--headline3, .mat-headline3, .mat-h3 {
+    font-weight: bold;
+    font-family: 'Source Sans Pro' !important;
+}
+
+.mdc-typography--headline6, .mat-headline6, .mat-h6 {
+    font-family: 'Source Sans Pro' !important;
+}
+
+.mdc-typography--headline6, .mat-headline6, .mat-h6, .display-name {
+    font-weight: bold;
+    font-family: 'Source Sans Pro' !important;
+}
+
+.mdc-typography--subtitle2, .mat-subtitle2 {
+    font-style: italic;
+    font-family: 'Source Sans Pro' !important;
+}
+
+.mdc-typography--body2, .mat-body2 {
+    font-family: 'Source Sans Pro' !important;
+}
 
 .qlik-green {
     background-color: #009845 !important;
@@ -140,12 +164,12 @@ h6 {
     white-space: nowrap;
     display: inline-block;
     color: #54565A;
-    font-family: var(--mdc-typography-body2-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));
+    font-family: 'Source Sans Pro', Fallback, sans-serif;
     font-size: 13px;
 }
 
 .mat-toast {
-    font-family: var(--mdc-typography-body2-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));
+    font-family: 'Source Sans Pro', Fallback, sans-serif;
 }
 
 #exportCertificateButton {
