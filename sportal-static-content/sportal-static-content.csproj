@@ -12,6 +12,11 @@
     <None Remove="wwwroot\matBlazor.css" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Remove="wwwroot\webfonts\source-sans-pro-v21-latin-regular.woff" />
+    <EmbeddedResource Remove="wwwroot\webfonts\source-sans-pro-v21-latin-regular.woff" />
+    <EmbeddedResource Remove="wwwroot\webfonts\source-sans-pro-v21-latin-regular.woff2" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="wwwroot\**\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
     <EmbeddedResource Include="wwwroot\**\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
     <EmbeddedResource Include="wwwroot\**" Exclude="**\*.js;**\*.css" LogicalName="blazor:file:%(RecursiveDir)%(Filename)%(Extension)" />
@@ -20,5 +25,10 @@
     <Folder Include="wwwroot\" />
     <Folder Include="wwwroot\js\" />
     <Folder Include="wwwroot\css\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="wwwroot\webfonts\source-sans-pro-v21-latin-regular.woff">
+      <LogicalName>blazor:file:webfonts\source-sans-pro-v21-latin-regular.woff</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
