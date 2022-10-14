@@ -249,8 +249,8 @@ namespace sportal.Services
 					Console.WriteLine("Image not found at '" + path + "', using default image instead.");
 					return "";
 				}
-
-				i = Image.Load(path);
+				byte[] imageBytes = File.ReadAllBytes(path);
+				i = Image.Load(imageBytes, out imageFormat);
 			}
 			float newWidth;
 			float newHeight;
