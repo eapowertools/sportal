@@ -5,47 +5,229 @@
 @inject IJSRuntime JSRuntime;
 @inject UserService UserServiceInstance
 @inject JWTService JWTServiceInstance
+@inject TenantSyncService TenantSyncServiceInstance
+@inject IMatToaster Toaster
 
 
-<div class="mat-layout-grid">
+<div class="user-toolbar">
+    <input class="user-search" type="search" placeholder="Search users, titles, roles or groups" @bind="Filter" @bind:event="oninput" />
+    <span class="user-count">@CountText</span>
+</div>
+
+<div class="mat-layout-grid user-grid">
     <div class="mat-layout-grid-inner">
 
-        @foreach (User u in _users)
+        @foreach (User u in VisibleUsers)
         {
+            <MatCard class="qlik-green user-card mat-layout-grid-cell">
+                <div class="user-card-body">
+                    <div class="user-card-main">
+                        <button type="button" class="user-avatar-button" title="Show details" aria-label="Show details for @u.DisplayName" @onclick="@(() => ShowDetails(u))">
+                            @if (u.Image == UserService.DEFAULT_IMAGE)
+                            {
+                                <span class="user-avatar user-initials" aria-hidden="true">@Initials(u.DisplayName)</span>
+                            }
+                            else
+                            {
+                                <img src="@u.Image" alt="" class="user-avatar">
+                            }
+                            <span class="user-info-badge" aria-hidden="true">i</span>
+                        </button>
+                        <div class="user-info">
+                            <div class="display-name user-name" title="@u.DisplayName">@u.DisplayName</div>
+                            @if (ShowTitle(u))
+                            {
+                                <div class="user-title" title="@u.Title">@u.Title</div>
+                            }
+                        </div>
+                        <MatIconButton Id="loginButton" Icon="@MatIconNames.Arrow_forward" OnClick="@(e => LoginButton(e, u))"></MatIconButton>
+                    </div>
 
-            <MatCard Id="userMatCard" class="qlik-green mat-layout-grid-cell mat-layout-grid-cell-span-3-desktop mat-layout-grid-cell-span-4-tablet mat-layout-grid-cell-span-4-phone">
-                <MatCardContent id="cardBodyContent">
-                    <div class="demo-mat-card-content">
-                        <MatHeadline6 class="demo-mat-card-clean-margin display-name">@u.DisplayName</MatHeadline6>
-                        <MatSubtitle2 class="demo-mat-card-clean-margin">@u.Title</MatSubtitle2>
-                        <img src="@u.Image" alt="" class="circle responsive-img-custom valign">
-                        <div>
-                            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">@u.Biography</MatBody2>
-                            <br>
+                    @if (!string.IsNullOrWhiteSpace(u.Biography))
+                    {
+                        <div class="user-bio" title="@u.Biography">@u.Biography</div>
+                    }
 
-                            <div class="parentChipGroup">
-
+                    @if (u.Groups.Length > 0)
+                    {
+                        <details class="group-dropdown">
+                            <summary>Groups (@u.Groups.Length)</summary>
+                            <div class="group-list parentChipGroup">
                                 @foreach (string group in u.Groups)
                                 {
-                                    <span class="groupChip">@group</span>}
+                                    <span class="groupChip">@group</span>
+                                }
                             </div>
+                        </details>
+                    }
+                    else
+                    {
+                        <div class="group-dropdown">
+                            <span class="group-empty">Groups (0)</span>
                         </div>
-                    </div>
-                </MatCardContent>
-                <MatCardActions>
-
-                    <MatCardActionIcons>
-                        <MatIconButton Id="loginButton" Icon="@MatIconNames.Arrow_forward" OnClick="@(e => LoginButton(e, u))"></MatIconButton>
-                    </MatCardActionIcons>
-                </MatCardActions>
-            </MatCard>  }
+                    }
+                </div>
+            </MatCard>
+        }
     </div>
 </div>
 
-@code { private User[] _users;
+<MatDialog @bind-IsOpen="@detailsOpen" Id="userDetailsDialog">
+    <MatDialogTitle>@(selectedUser?.DisplayName)</MatDialogTitle>
+    <MatDialogContent>
+        @if (selectedUser != null)
+        {
+            <dl class="detail-list">
+                <dt>Subject</dt>
+                <dd>@selectedUser.Subject</dd>
+                <dt>User ID</dt>
+                <dd>@(string.IsNullOrEmpty(selectedUser.Id) ? "Not available (users.json entry)" : selectedUser.Id)</dd>
+                <dt>Email</dt>
+                <dd>@selectedUser.Email</dd>
+                <dt>Roles (@selectedUser.Roles.Length)</dt>
+                <dd>
+                    @if (selectedUser.Roles.Length == 0)
+                    {
+                        <span>None</span>
+                    }
+                    <div class="detail-chips">
+                        @foreach (string role in selectedUser.Roles)
+                        {
+                            <span class="groupChip">@role</span>
+                        }
+                    </div>
+                </dd>
+                <dt>Groups (@selectedUser.Groups.Length)</dt>
+                <dd>
+                    @if (selectedUser.Groups.Length == 0)
+                    {
+                        <span>None</span>
+                    }
+                    <div class="detail-chips">
+                        @foreach (string group in selectedUser.Groups)
+                        {
+                            <span class="groupChip">@group</span>
+                        }
+                    </div>
+                </dd>
+            </dl>
+        }
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { detailsOpen = false; })">Close</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+@if (HiddenCount > 0)
+{
+    <div class="user-more">
+        <MatButton Outlined="true" OnClick="@ShowMore">Show more (@HiddenCount remaining)</MatButton>
+    </div>
+}
+
+@code {
+    private const int PAGE_SIZE = 24;
+
+    private User[] _users = new User[0];
+
+    private string _filter = "";
+
+    private User selectedUser;
+
+    private bool detailsOpen;
+
+    private int _shown = PAGE_SIZE;
+
+    private string Filter
+    {
+        get { return _filter; }
+        set
+        {
+            _filter = value ?? "";
+            _shown = PAGE_SIZE;
+        }
+    }
+
+    private IEnumerable<User> MatchingUsers
+    {
+        get
+        {
+            string f = _filter.Trim();
+            if (f.Length == 0)
+            {
+                return _users;
+            }
+            return _users.Where(u => Contains(u.DisplayName, f) || Contains(u.Title, f) || Contains(u.Email, f) || u.Roles.Any(r => Contains(r, f)) || u.Groups.Any(g => Contains(g, f)));
+        }
+    }
+
+    private IEnumerable<User> VisibleUsers
+    {
+        get { return MatchingUsers.Take(_shown); }
+    }
+
+    private int HiddenCount
+    {
+        get { return Math.Max(0, MatchingUsers.Count() - _shown); }
+    }
+
+    private string CountText
+    {
+        get
+        {
+            int matching = MatchingUsers.Count();
+            int shown = Math.Min(matching, _shown);
+            return matching == _users.Length
+                ? "Showing " + shown + " of " + _users.Length + " users"
+                : "Showing " + shown + " of " + matching + " matching users (" + _users.Length + " total)";
+        }
+    }
+
+    private static bool Contains(string value, string filter)
+    {
+        return value != null && value.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    private static string Initials(string name)
+    {
+        string[] parts = (name ?? "").Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0)
+        {
+            return "?";
+        }
+        string initials = parts[0].Substring(0, 1);
+        if (parts.Length > 1)
+        {
+            initials += parts[parts.Length - 1].Substring(0, 1);
+        }
+        return initials.ToUpper();
+    }
+
+    private void ShowDetails(User u)
+    {
+        selectedUser = u;
+        detailsOpen = true;
+    }
+
+    // A tenant user can hold many roles, so Impersonate and Sync show no title line.
+    private bool ShowTitle(User u)
+    {
+        return !JWTServiceInstance.GetEffectiveMode().UsesTenant() && !string.IsNullOrWhiteSpace(u.Title);
+    }
+
+    private void ShowMore()
+    {
+        _shown += PAGE_SIZE;
+    }
 
     protected override async Task OnInitializedAsync()
     {
+        // In Impersonate and Sync modes the tenant is read once, before the tiles are listed.
+        SyncResult result = await TenantSyncServiceInstance.EnsureInitializedAsync();
+        if (result.Failed)
+        {
+            Toaster.Add(result.Message + " Showing users from users.json instead.", MatToastType.Danger);
+        }
         _users = await UserServiceInstance.GetUserListAsync();
     }
 
@@ -63,6 +245,5 @@
         {
             Console.WriteLine("Login failed. Please validate that Sportal has been configured correctly.");
         }
-    }}
-
-
+    }
+}

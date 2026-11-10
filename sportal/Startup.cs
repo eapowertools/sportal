@@ -32,6 +32,8 @@ namespace sportal
 			services.AddServerSideBlazor();
 			services.AddSingleton<UserService>();
 			services.AddSingleton<JWTService>();
+			services.AddSingleton(_ => new QlikCloudClient());
+			services.AddSingleton<TenantSyncService>();
 
 			services.AddMatToaster(config =>
 			{

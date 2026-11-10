@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Hosting;
 
+using sportal.Data;
 using sportal.EmbeddedBlazorContentHelpers;
 
 namespace sportal
@@ -27,6 +28,9 @@ namespace sportal
 		internal static SecureString CERTIFICATE_PASSWORD = null;
 
 		internal static bool ENABLE_CERTIFICATE_EXPORT = false;
+
+		// Set by --mode; takes precedence over the mode saved in the settings dialog.
+		internal static SportalMode? MODE_OVERRIDE = null;
 	}
 
 	public class Program
@@ -79,6 +83,20 @@ namespace sportal
 				else if (args[i] == "--enablecertificateexport")
 				{
 					GlobalSettings.ENABLE_CERTIFICATE_EXPORT = true;
+				}
+				else if (args[i] == "--mode")
+				{
+					i++;
+					if (i < args.Length && Enum.TryParse(args[i], true, out SportalMode mode) && Enum.IsDefined(typeof(SportalMode), mode))
+					{
+						GlobalSettings.MODE_OVERRIDE = mode;
+						Console.WriteLine("Mode: " + mode);
+					}
+					else
+					{
+						Console.WriteLine("Invalid mode. Use local, impersonate or sync.");
+						throw new Exception("Exiting...");
+					}
 				}
 				else
 				{

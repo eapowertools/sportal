@@ -20,8 +20,15 @@ namespace sportal.Data
 
 		public string[] Groups { get; private set; }
 
-		public User(string subject, string displayName, string email, string title, string biography, string image, string imageURL, string[] groups)
+		// Tenant user id and role names; only known for users read from the tenant.
+		public string Id { get; private set; }
+
+		public string[] Roles { get; private set; }
+
+		public User(string subject, string displayName, string email, string title, string biography, string image, string imageURL, string[] groups, string id = null, string[] roles = null)
 		{
+			this.Id = id;
+			this.Roles = roles ?? new string[0];
 			this.Subject = subject;
 			this.DisplayName = displayName;
 			this.Email = email;

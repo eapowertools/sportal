@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sportal-static-content", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sportal", "sportal\sportal.csproj", "{23EC63DD-C143-4ECE-82C9-0EB88D0EBC25}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sportal.Tests", "sportal.Tests\sportal.Tests.csproj", "{7D3C1A52-0B8E-4C2F-9E63-5A1F2B7C4D90}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,5 +21,9 @@ Global
 		{23EC63DD-C143-4ECE-82C9-0EB88D0EBC25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23EC63DD-C143-4ECE-82C9-0EB88D0EBC25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23EC63DD-C143-4ECE-82C9-0EB88D0EBC25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D3C1A52-0B8E-4C2F-9E63-5A1F2B7C4D90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D3C1A52-0B8E-4C2F-9E63-5A1F2B7C4D90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D3C1A52-0B8E-4C2F-9E63-5A1F2B7C4D90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D3C1A52-0B8E-4C2F-9E63-5A1F2B7C4D90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,28 +1,35 @@
 ﻿@using sportal.Services
 @inject UserService UserServiceInstance
+@inject TenantSyncService TenantSyncServiceInstance
 
 
 <div id="titleHeader">
     <MatHeadline3 class="textCenter qlik-green-text">Sportal</MatHeadline3>
 </div>
 <div id="captionHeader">
-    <MatHeadline6 class="textCenter">An impersonation portal for Qlik Sense® Enterprise SaaS</MatHeadline6>
+    <MatHeadline6 class="textCenter">An impersonation portal for Qlik® Cloud</MatHeadline6>
 </div>
 
-<div id="groupContainer" class="qlik-tanzanite">
+@if (chipGroups.Length > 0)
+{
+    <details id="groupContainer" class="qlik-tanzanite">
+        <summary id="groupHeader" class="white-text">Groups (@chipGroups.Length)</summary>
+        <div class="parentChipGroup header-group-list">
 
-    <MatHeadline6 id="groupHeader" class="textCenter white-text">Groups</MatHeadline6>
-    <div class="parentChipGroup">
+            @foreach (string group in chipGroups)
+            {
+                <span class="groupChip">@group</span>
+            }
+        </div>
+    </details>
+}
 
-        @foreach (string group in chipGroups)
-        {
-<span class="groupChip">@group</span>}
-    </div>
-</div>
-
-@code{ string[] chipGroups;
+@code {
+    string[] chipGroups = new string[0];
 
     protected override async Task OnInitializedAsync()
     {
+        await TenantSyncServiceInstance.EnsureInitializedAsync();
         chipGroups = await UserServiceInstance.GetChipGroupsAsync();
-    } }
+    }
+}

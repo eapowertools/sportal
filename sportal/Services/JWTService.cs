@@ -84,6 +84,24 @@ namespace sportal.Services
 
 		public string GenerateToken(User user)
 		{
+			return BuildToken(user.Subject, user.DisplayName, user.Email, user.HasImageURL() ? user.ImageURL : null, user.Groups);
+		}
+
+		// Token for the configured TenantAdmin (Impersonate and Sync modes). It carries no 'groups' claim
+		// so the admin's group membership in the tenant is left alone.
+		public string GenerateAdminToken()
+		{
+			return BuildToken(_tenantData.AdminSubject, _tenantData.AdminName, _tenantData.AdminEmail, null, new string[0]);
+		}
+
+		// The --mode command line option wins over the mode saved in the settings dialog.
+		public SportalMode GetEffectiveMode()
+		{
+			return GlobalSettings.MODE_OVERRIDE ?? _tenantData.Mode;
+		}
+
+		private string BuildToken(string subject, string displayName, string email, string imageURL, string[] groups)
+		{
 			var tokenHandler = new JwtSecurityTokenHandler();
 			RsaSecurityKey securityKey = new RsaSecurityKey(RSACertificateExtensions.GetRSAPrivateKey(_certificate));
 			securityKey.KeyId = _tenantData.KeyID;
@@ -94,25 +112,25 @@ namespace sportal.Services
 				Subject = new ClaimsIdentity(new Claim[]
 				{
 					new Claim("jti", Guid.NewGuid().ToString()),
-					new Claim("sub", user.Subject),
+					new Claim("sub", subject),
 					new Claim("subType", "user"),
-					new Claim("name", user.DisplayName),
-					new Claim("email", user.Email),
+					new Claim("name", displayName),
+					new Claim("email", email),
 					new Claim("email_verified", "true", ClaimValueTypes.Boolean)
 				}),
-				Expires = DateTime.Now.AddMinutes(3),
+				Expires = DateTime.UtcNow.AddMinutes(3),
 				Issuer = _tenantData.Issuer,
 				Audience = "qlik.api/login/jwt-session",
-				NotBefore = DateTime.Now.AddMinutes(-3),
+				NotBefore = DateTime.UtcNow.AddMinutes(-3),
 				SigningCredentials = signingCredentials
 			};
-			if (user.HasImageURL())
+			if (!string.IsNullOrEmpty(imageURL))
 			{
-				tokenDescriptor.Subject.AddClaim(new Claim("picture", user.ImageURL));
+				tokenDescriptor.Subject.AddClaim(new Claim("picture", imageURL));
 			}
-			for (int i = 0; i < user.Groups.Length; i++)
+			for (int i = 0; i < groups.Length; i++)
 			{
-				tokenDescriptor.Subject.AddClaim(new Claim("groups", user.Groups[i]));
+				tokenDescriptor.Subject.AddClaim(new Claim("groups", groups[i]));
 			}
 
 			var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -140,12 +158,21 @@ namespace sportal.Services
 
 		public void SaveUpdatedTenantData(string hostname, string webIntegrationID, string jwtIssuer, string jwtKeyID)
 		{
+			SaveUpdatedTenantData(hostname, webIntegrationID, jwtIssuer, jwtKeyID, _tenantData.Mode, _tenantData.AdminSubject, _tenantData.AdminName, _tenantData.AdminEmail);
+		}
+
+		public void SaveUpdatedTenantData(string hostname, string webIntegrationID, string jwtIssuer, string jwtKeyID, SportalMode mode, string adminSubject, string adminName, string adminEmail)
+		{
 			Task<TenantData> saveTenantDataTask = new Task<TenantData>(() =>
 			{
 				_tenantData.Hostname = hostname;
 				_tenantData.WebIntegrationID = webIntegrationID;
 				_tenantData.Issuer = jwtIssuer;
 				_tenantData.KeyID = jwtKeyID;
+				_tenantData.Mode = mode;
+				_tenantData.AdminSubject = adminSubject;
+				_tenantData.AdminName = adminName;
+				_tenantData.AdminEmail = adminEmail;
 				SaveTenantData();
 				return _tenantData;
 			});
