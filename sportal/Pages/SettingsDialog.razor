@@ -4,6 +4,7 @@
 @inject IJSRuntime JSRuntime
 @inject JWTService JWTServiceInstance
 @inject UserService UserServiceInstance
+@inject TenantSyncService TenantSyncServiceInstance
 @inject IMatToaster Toaster
 
 <MatDialog Id="settingsDialog" @bind-IsOpen="@DialogIsOpen">
@@ -27,6 +28,39 @@
         <p>
             <MatStringField @bind-Value="@jwtKeyID" Label="JWT Key ID" PlaceHolder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" FullWidth="true"></MatStringField>
         </p>
+        <br />
+        <div class="mode-label">Mode</div>
+        <div class="mode-picker" role="radiogroup" aria-label="Mode">
+            @foreach (var m in modes)
+            {
+                <button type="button" role="radio" aria-checked="@(m.Mode == selectedMode ? "true" : "false")"
+                        class="mode-option @(m.Mode == selectedMode ? "selected" : "")" @onclick="@(() => selectedMode = m.Mode)">
+                    <span class="mode-title">@m.Label</span>
+                    <span class="mode-description">@m.Description</span>
+                </button>
+            }
+        </div>
+        @if (GlobalSettings.MODE_OVERRIDE.HasValue)
+        {
+            <p>
+                <span>The --mode command line option (@GlobalSettings.MODE_OVERRIDE.Value) overrides this setting.</span>
+            </p>
+        }
+        @if (selectedMode.UsesTenant())
+        {
+            <p>
+                <span>The TenantAdmin must already exist in the tenant. Use its 'subject' value, name and email exactly as the tenant shows them.</span>
+            </p>
+            <p>
+                <MatStringField @bind-Value="@adminSubject" Label="TenantAdmin Subject" FullWidth="true"></MatStringField>
+            </p>
+            <p>
+                <MatStringField @bind-Value="@adminName" Label="TenantAdmin Name" FullWidth="true"></MatStringField>
+            </p>
+            <p>
+                <MatStringField @bind-Value="@adminEmail" Label="TenantAdmin Email" FullWidth="true"></MatStringField>
+            </p>
+        }
 
 
     </MatDialogContent>
@@ -35,10 +69,30 @@
         {
             <MatButton Id="exportCertificateButton" @onclick="DownloadCertificate">Export Certificate</MatButton>
         }
-        <MatButton Id="refreshUsersButton" OnClick="@RefreshUsers">Refresh Users</MatButton>
+        <MatButton Id="createStockUsersButton" OnClick="@(e => { confirmAction = ConfirmAction.StockUsers; })">New Stock users.json</MatButton>
+        <MatButton Id="refreshUsersButton" OnClick="@RefreshClick">Refresh Users</MatButton>
 
         <MatButton OnClick="@(e => { dialogIsOpen = false; })">Cancel</MatButton>
         <MatButton OnClick="@SaveClick">Save</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+<MatDialog Id="confirmDialog" IsOpen="@ConfirmIsOpen" IsOpenChanged="@ConfirmOpenChanged">
+    <MatDialogTitle>@(confirmAction == ConfirmAction.StockUsers ? "Replace users.json?" : "Overwrite users.json?")</MatDialogTitle>
+    <MatDialogContent>
+        @if (confirmAction == ConfirmAction.StockUsers)
+        {
+            <p>This replaces users.json with the stock sample users. Any users you added or edited are removed from the file.</p>
+        }
+        else
+        {
+            <p>Sync merges the tenant's users and groups into users.json and overwrites the file. Names, emails, groups and roles take the tenant's values; titles, biographies and images you entered are kept.</p>
+        }
+        <p>The current file is saved as users.json.bak first. Only the most recent backup is kept.</p>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { confirmAction = ConfirmAction.None; })">Cancel</MatButton>
+        <MatButton Raised="true" OnClick="@ConfirmClick">@(confirmAction == ConfirmAction.StockUsers ? "Replace" : "Sync and Overwrite")</MatButton>
     </MatDialogActions>
 </MatDialog>
 
@@ -51,6 +105,17 @@
     string webIntegrationID;
     string jwtIssuer;
     string jwtKeyID;
+    SportalMode selectedMode;
+    string adminSubject;
+    string adminName;
+    string adminEmail;
+    static readonly (SportalMode Mode, string Label, string Description)[] modes =
+    {
+        (SportalMode.Local, "Read from Local", "Reads the users from the local users.json. Nothing is fetched from the Qlik Cloud tenant."),
+        (SportalMode.Impersonate, "Impersonate", "Does not read the local users.json. Users are read exclusively from the Qlik Cloud tenant (active users only) on each refresh, and users.json is not changed."),
+        (SportalMode.Sync, "Sync", "Overwrites the local users.json with the users and attributes fetched from the Qlik Cloud tenant. Titles, biographies and images you entered by hand are kept. The previous file is saved as users.json.bak.")
+    };
+
 
     string PUBLIC_KEY;
     private bool dialogIsOpen;
@@ -65,6 +130,7 @@
                 webIntegrationID = tenantData.WebIntegrationID;
                 jwtIssuer = tenantData.Issuer;
                 jwtKeyID = tenantData.KeyID;
+                LoadModeFields();
             }
             dialogIsOpen = value;
         }
@@ -80,6 +146,15 @@
         webIntegrationID = tenantData.WebIntegrationID;
         jwtIssuer = tenantData.Issuer;
         jwtKeyID = tenantData.KeyID;
+        LoadModeFields();
+    }
+
+    private void LoadModeFields()
+    {
+        selectedMode = tenantData.Mode;
+        adminSubject = tenantData.AdminSubject;
+        adminName = tenantData.AdminName;
+        adminEmail = tenantData.AdminEmail;
     }
 
     private void OpenDialog()
@@ -93,13 +168,73 @@
         tenantData.WebIntegrationID = webIntegrationID;
         tenantData.Issuer = jwtIssuer;
         tenantData.KeyID = jwtKeyID;
+        tenantData.Mode = selectedMode;
+        tenantData.AdminSubject = adminSubject;
+        tenantData.AdminName = adminName;
+        tenantData.AdminEmail = adminEmail;
         dialogIsOpen = false;
-        JWTServiceInstance.SaveUpdatedTenantData(hostname, webIntegrationID, jwtIssuer, jwtKeyID);
+        JWTServiceInstance.SaveUpdatedTenantData(hostname, webIntegrationID, jwtIssuer, jwtKeyID, tenantData.Mode, adminSubject, adminName, adminEmail);
     }
 
-    private async void RefreshUsers()
+    enum ConfirmAction { None, Sync, StockUsers }
+
+    ConfirmAction confirmAction = ConfirmAction.None;
+
+    bool ConfirmIsOpen
     {
-        UserServiceInstance.RefreshUsers();
+        get { return confirmAction != ConfirmAction.None; }
+    }
+
+    void ConfirmOpenChanged(bool isOpen)
+    {
+        if (!isOpen)
+        {
+            confirmAction = ConfirmAction.None;
+        }
+    }
+
+    private async Task RefreshClick()
+    {
+        // Sync rewrites users.json, so it has to be confirmed first.
+        if (JWTServiceInstance.GetEffectiveMode() == SportalMode.Sync)
+        {
+            confirmAction = ConfirmAction.Sync;
+            return;
+        }
+        await RefreshUsers();
+    }
+
+    private async Task ConfirmClick()
+    {
+        ConfirmAction action = confirmAction;
+        confirmAction = ConfirmAction.None;
+        if (action == ConfirmAction.Sync)
+        {
+            await RefreshUsers();
+        }
+        else if (action == ConfirmAction.StockUsers)
+        {
+            SyncResult result = await TenantSyncServiceInstance.CreateStockUsersFileAsync();
+            Toaster.Add(result.Message, result.Failed ? MatToastType.Danger : MatToastType.Success);
+            if (!result.Failed)
+            {
+                await JSRuntime.InvokeAsync<string>("blazorExtensions.Refresh");
+            }
+        }
+    }
+
+    private async Task RefreshUsers()
+    {
+        // Local re-reads users.json; Impersonate and Sync read the tenant again (Sync also rewrites users.json).
+        SyncResult result = await TenantSyncServiceInstance.RefreshAsync();
+        if (result.Failed)
+        {
+            Toaster.Add(result.Message, MatToastType.Danger);
+        }
+        else if (!string.IsNullOrEmpty(result.Message))
+        {
+            Toaster.Add(result.Message, MatToastType.Success);
+        }
 
         await JSRuntime.InvokeAsync<string>("blazorExtensions.Refresh");
     }
